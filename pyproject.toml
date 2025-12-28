@@ -5,6 +5,20 @@ description = "A fast and lightweight Python interface for interacting with Stea
 license = "MIT"
 readme = "README.md"
 requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Development Status :: 3 - Alpha",
+]
 dependencies = [
     "requests (>=2.32.5,<3.0.0)",
     "aiohttp (>=3.13.2,<4.0.0)",
@@ -25,6 +39,9 @@ docs = [
     "mkdocstrings[python] (>=1.0.0,<2.0.0)",
 ]
 
+[project.urls]
+"Homepage" = "https://python.steam.style"
+"Bug Tracker" = "https://github.com/Steam-Style/steam/issues"
 
 [build-system]
 requires = ["hatchling"]
@@ -32,3 +49,9 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/steam"]
+
+[tool.pylint.main]
+ignore = ["CVS", "protobufs", "enums"]
+
+[tool.pylint.messages_control]
+disable = ["missing-module-docstring", "unused-argument"]
