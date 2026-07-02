@@ -27,7 +27,7 @@ import steammessages_base_pb2 as steammessages__base__pb2
 import webuimessages_base_pb2 as webuimessages__base__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x19webuimessages_sleep.proto\x1a\x0b\x65nums.proto\x1a\x18steammessages_base.proto\x1a\x18webuimessages_base.proto\"\x88\x01\n\x15\x43MsgSleepManagerState\x12\'\n\x1fis_low_power_download_supported\x18\x01 \x01(\x08\x12\x46\n\rcurrent_state\x18\x02 \x01(\x0e\x32\x12.ESystemPowerState:\x1bk_ESystemPowerState_Invalid\" \n\x1e\x43SleepManager_GetState_Request\"H\n\x1f\x43SleepManager_GetState_Response\x12%\n\x05state\x18\x01 \x01(\x0b\x32\x16.CMsgSleepManagerState\")\n\'CSleepManager_StateChanged_Notification\"a\n)CSleepManager_RequestSuspend_Notification\x12\x34\n,optionally_transition_to_low_power_downloads\x18\x01 \x01(\x08\".\n,CSleepManager_ResumeFromSuspend_Notification\"*\n(CSleepManager_ShowPowerMenu_Notification\"z\n(CSleepManager_SwitchToPowerState_Request\x12>\n\x05state\x18\x01 \x01(\x0e\x32\x12.ESystemPowerState:\x1bk_ESystemPowerState_Invalid\x12\x0e\n\x06reason\x18\x02 \x01(\t\"+\n)CSleepManager_SwitchToPowerState_Response\"$\n\"CSleepManager_RequestSleep_Request\"%\n#CSleepManager_RequestSleep_Response*\x9e\x01\n\x11\x45SystemPowerState\x12\x1f\n\x1bk_ESystemPowerState_Invalid\x10\x00\x12\x1e\n\x1ak_ESystemPowerState_Normal\x10\x01\x12)\n%k_ESystemPowerState_LowPowerDownloads\x10\x02\x12\x1d\n\x19k_ESystemPowerState_Sleep\x10\x03\x32\x83\x05\n\x0cSleepManager\x12M\n\x08GetState\x12\x1f.CSleepManager_GetState_Request\x1a .CSleepManager_GetState_Response\x12P\n\x12NotifyStateChanged\x12(.CSleepManager_StateChanged_Notification\x1a\x10.WebUINoResponse\x12T\n\x14NotifyRequestSuspend\x12*.CSleepManager_RequestSuspend_Notification\x1a\x10.WebUINoResponse\x12Z\n\x17NotifyResumeFromSuspend\x12-.CSleepManager_ResumeFromSuspend_Notification\x1a\x10.WebUINoResponse\x12R\n\x13NotifyShowPowerMenu\x12).CSleepManager_ShowPowerMenu_Notification\x1a\x10.WebUINoResponse\x12k\n\x12SwitchToPowerState\x12).CSleepManager_SwitchToPowerState_Request\x1a*.CSleepManager_SwitchToPowerState_Response\x12Y\n\x0cRequestSleep\x12#.CSleepManager_RequestSleep_Request\x1a$.CSleepManager_RequestSleep_Response\x1a\x04\x80\x97\"\x01\x42\x05H\x01\x80\x01\x01')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x19webuimessages_sleep.proto\x1a\x0b\x65nums.proto\x1a\x18steammessages_base.proto\x1a\x18webuimessages_base.proto\"\x88\x01\n\x15\x43MsgSleepManagerState\x12\'\n\x1fis_low_power_download_supported\x18\x01 \x01(\x08\x12\x46\n\rcurrent_state\x18\x02 \x01(\x0e\x32\x12.ESystemPowerState:\x1bk_ESystemPowerState_Invalid\" \n\x1e\x43SleepManager_GetState_Request\"H\n\x1f\x43SleepManager_GetState_Response\x12%\n\x05state\x18\x01 \x01(\x0b\x32\x16.CMsgSleepManagerState\")\n\'CSleepManager_StateChanged_Notification\"\x82\x01\n)CSleepManager_RequestSuspend_Notification\x12\x34\n,optionally_transition_to_low_power_downloads\x18\x01 \x01(\x08\x12\x1f\n\x17suppress_actual_suspend\x18\x02 \x01(\x08\".\n,CSleepManager_ResumeFromSuspend_Notification\"*\n(CSleepManager_ShowPowerMenu_Notification\"z\n(CSleepManager_SwitchToPowerState_Request\x12>\n\x05state\x18\x01 \x01(\x0e\x32\x12.ESystemPowerState:\x1bk_ESystemPowerState_Invalid\x12\x0e\n\x06reason\x18\x02 \x01(\t\"+\n)CSleepManager_SwitchToPowerState_Response\"$\n\"CSleepManager_RequestSleep_Request\"%\n#CSleepManager_RequestSleep_Response*\x9e\x01\n\x11\x45SystemPowerState\x12\x1f\n\x1bk_ESystemPowerState_Invalid\x10\x00\x12\x1e\n\x1ak_ESystemPowerState_Normal\x10\x01\x12)\n%k_ESystemPowerState_LowPowerDownloads\x10\x02\x12\x1d\n\x19k_ESystemPowerState_Sleep\x10\x03\x32\x83\x05\n\x0cSleepManager\x12M\n\x08GetState\x12\x1f.CSleepManager_GetState_Request\x1a .CSleepManager_GetState_Response\x12P\n\x12NotifyStateChanged\x12(.CSleepManager_StateChanged_Notification\x1a\x10.WebUINoResponse\x12T\n\x14NotifyRequestSuspend\x12*.CSleepManager_RequestSuspend_Notification\x1a\x10.WebUINoResponse\x12Z\n\x17NotifyResumeFromSuspend\x12-.CSleepManager_ResumeFromSuspend_Notification\x1a\x10.WebUINoResponse\x12R\n\x13NotifyShowPowerMenu\x12).CSleepManager_ShowPowerMenu_Notification\x1a\x10.WebUINoResponse\x12k\n\x12SwitchToPowerState\x12).CSleepManager_SwitchToPowerState_Request\x1a*.CSleepManager_SwitchToPowerState_Response\x12Y\n\x0cRequestSleep\x12#.CSleepManager_RequestSleep_Request\x1a$.CSleepManager_RequestSleep_Response\x1a\x04\x80\x97\"\x01\x42\x05H\x01\x80\x01\x01')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -37,8 +37,8 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._serialized_options = b'H\001\200\001\001'
   _globals['_SLEEPMANAGER']._loaded_options = None
   _globals['_SLEEPMANAGER']._serialized_options = b'\200\227\"\001'
-  _globals['_ESYSTEMPOWERSTATE']._serialized_start=822
-  _globals['_ESYSTEMPOWERSTATE']._serialized_end=980
+  _globals['_ESYSTEMPOWERSTATE']._serialized_start=856
+  _globals['_ESYSTEMPOWERSTATE']._serialized_end=1014
   _globals['_CMSGSLEEPMANAGERSTATE']._serialized_start=95
   _globals['_CMSGSLEEPMANAGERSTATE']._serialized_end=231
   _globals['_CSLEEPMANAGER_GETSTATE_REQUEST']._serialized_start=233
@@ -47,20 +47,20 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_CSLEEPMANAGER_GETSTATE_RESPONSE']._serialized_end=339
   _globals['_CSLEEPMANAGER_STATECHANGED_NOTIFICATION']._serialized_start=341
   _globals['_CSLEEPMANAGER_STATECHANGED_NOTIFICATION']._serialized_end=382
-  _globals['_CSLEEPMANAGER_REQUESTSUSPEND_NOTIFICATION']._serialized_start=384
-  _globals['_CSLEEPMANAGER_REQUESTSUSPEND_NOTIFICATION']._serialized_end=481
-  _globals['_CSLEEPMANAGER_RESUMEFROMSUSPEND_NOTIFICATION']._serialized_start=483
-  _globals['_CSLEEPMANAGER_RESUMEFROMSUSPEND_NOTIFICATION']._serialized_end=529
-  _globals['_CSLEEPMANAGER_SHOWPOWERMENU_NOTIFICATION']._serialized_start=531
-  _globals['_CSLEEPMANAGER_SHOWPOWERMENU_NOTIFICATION']._serialized_end=573
-  _globals['_CSLEEPMANAGER_SWITCHTOPOWERSTATE_REQUEST']._serialized_start=575
-  _globals['_CSLEEPMANAGER_SWITCHTOPOWERSTATE_REQUEST']._serialized_end=697
-  _globals['_CSLEEPMANAGER_SWITCHTOPOWERSTATE_RESPONSE']._serialized_start=699
-  _globals['_CSLEEPMANAGER_SWITCHTOPOWERSTATE_RESPONSE']._serialized_end=742
-  _globals['_CSLEEPMANAGER_REQUESTSLEEP_REQUEST']._serialized_start=744
-  _globals['_CSLEEPMANAGER_REQUESTSLEEP_REQUEST']._serialized_end=780
-  _globals['_CSLEEPMANAGER_REQUESTSLEEP_RESPONSE']._serialized_start=782
-  _globals['_CSLEEPMANAGER_REQUESTSLEEP_RESPONSE']._serialized_end=819
-  _globals['_SLEEPMANAGER']._serialized_start=983
-  _globals['_SLEEPMANAGER']._serialized_end=1626
+  _globals['_CSLEEPMANAGER_REQUESTSUSPEND_NOTIFICATION']._serialized_start=385
+  _globals['_CSLEEPMANAGER_REQUESTSUSPEND_NOTIFICATION']._serialized_end=515
+  _globals['_CSLEEPMANAGER_RESUMEFROMSUSPEND_NOTIFICATION']._serialized_start=517
+  _globals['_CSLEEPMANAGER_RESUMEFROMSUSPEND_NOTIFICATION']._serialized_end=563
+  _globals['_CSLEEPMANAGER_SHOWPOWERMENU_NOTIFICATION']._serialized_start=565
+  _globals['_CSLEEPMANAGER_SHOWPOWERMENU_NOTIFICATION']._serialized_end=607
+  _globals['_CSLEEPMANAGER_SWITCHTOPOWERSTATE_REQUEST']._serialized_start=609
+  _globals['_CSLEEPMANAGER_SWITCHTOPOWERSTATE_REQUEST']._serialized_end=731
+  _globals['_CSLEEPMANAGER_SWITCHTOPOWERSTATE_RESPONSE']._serialized_start=733
+  _globals['_CSLEEPMANAGER_SWITCHTOPOWERSTATE_RESPONSE']._serialized_end=776
+  _globals['_CSLEEPMANAGER_REQUESTSLEEP_REQUEST']._serialized_start=778
+  _globals['_CSLEEPMANAGER_REQUESTSLEEP_REQUEST']._serialized_end=814
+  _globals['_CSLEEPMANAGER_REQUESTSLEEP_RESPONSE']._serialized_start=816
+  _globals['_CSLEEPMANAGER_REQUESTSLEEP_RESPONSE']._serialized_end=853
+  _globals['_SLEEPMANAGER']._serialized_start=1017
+  _globals['_SLEEPMANAGER']._serialized_end=1660
 # @@protoc_insertion_point(module_scope)
