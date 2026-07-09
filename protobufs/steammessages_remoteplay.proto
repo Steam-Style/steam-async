@@ -117,6 +117,7 @@ enum EStreamControlMessage {
 	k_EStreamControlVRConnectionReady = 145;
 	k_EStreamControlSetCursorScale = 146;
 	k_EStreamControlCaptureFailed = 147;
+	k_EStreamControlVideoOverflow = 148;
 }
 
 enum EStreamVersion {
@@ -880,6 +881,11 @@ message CVRConnectionReady {
 
 message CCaptureFailedMsg {
 	optional .ECaptureFailedReason reason = 1 [default = k_ECaptureFailedReasonNone];
+}
+
+message CStreamVideoOverflowMsg {
+	optional uint32 first_frame_id = 1;
+	optional uint32 last_frame_id = 2;
 }
 
 message CStreamDataLostMsg {

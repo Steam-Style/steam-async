@@ -16,6 +16,11 @@ enum ERemoteClientPairWifiAPResult {
 	k_ERemoteClientPairWifiAPCanceled = 7;
 }
 
+enum EStreamingDongleFixResult {
+	k_EStreamingDongleFixResultSuccess = 1;
+	k_EStreamingDongleFixResultFailure = 2;
+}
+
 message CMsgRemoteClientStatus {
 	optional uint64 client_id = 1;
 	optional uint64 instance_id = 2;
@@ -190,6 +195,7 @@ message CMsgRemoteClientStartStream {
 	optional int32 maximum_framerate_numerator = 12;
 	optional int32 maximum_framerate_denominator = 13;
 	optional bool display_hdr = 14;
+	optional bool launch_only = 15 [default = false];
 }
 
 message CMsgRemoteClientStartStreamResponse {
@@ -204,6 +210,7 @@ message CMsgRemoteClientStartStreamResponse {
 	optional int32 launch_tasks_done = 9;
 	optional int32 launch_tasks_total = 10;
 	optional string vr_connection_params = 11;
+	optional bool launch_only = 12 [default = false];
 }
 
 message CMsgRemoteClientPing {
