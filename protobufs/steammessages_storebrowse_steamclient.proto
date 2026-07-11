@@ -275,6 +275,7 @@ message StoreItem {
 		optional .ESteamDeckCompatibilityCategory steam_deck_compat_category = 11 [default = k_ESteamDeckCompatibilityCategory_Unknown];
 		optional .ESteamOSCompatibilityCategory steam_os_compat_category = 12 [default = k_ESteamOSCompatibilityCategory_Unknown];
 		optional .ESteamDeckCompatibilityCategory steam_frame_compat_category = 13 [default = k_ESteamDeckCompatibilityCategory_Unknown];
+		optional .ESteamDeckCompatibilityCategory steam_machine_compat_category = 14 [default = k_ESteamDeckCompatibilityCategory_Unknown];
 	}
 
 	message PurchaseOption {
