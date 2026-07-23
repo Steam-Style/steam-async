@@ -97,6 +97,7 @@ class EMsg(IntEnum):
     GMStatsForwardToAdminConnections = 338
     GMGetModifiedConVars = 339
     GMGetModifiedConVarsResponse = 340
+    GMNeedShellAndServerAddresses = 341
     BaseAIS = 400
     AISRequestContentDescription = 402
     AISGetPackageChangeNumber = 405
@@ -105,11 +106,11 @@ class EMsg(IntEnum):
     AIGetAppGCFlagsResponse = 424
     AIGetAppList = 425
     AIGetAppListResponse = 426
-    AISGetCouponDefinition = 429
-    AISGetCouponDefinitionResponse = 430
     AISUpdateSubordinateContentDescription = 431
     AISUpdateSubordinateContentDescriptionResponse = 432
     AISBroadcastSubordinateContentDescription = 434
+    ProductInfoChangedNotification = 435
+    ProductInfoCacheStatus = 436
     BaseAM = 500
     AMUpdateUserBanRequest = 504
     AMAddLicense = 505
@@ -225,18 +226,14 @@ class EMsg(IntEnum):
     ClientRemoveFriend = 714
     ClientGamesPlayedNoDataBlob = 715
     ClientChangeStatus = 716
-    ClientVacStatusResponse = 717
     ClientFriendMsg = 718
     ClientGameConnect_obsolete = 719
     ClientGamesPlayed2_obsolete = 720
     ClientGameEnded_obsolete = 721
     ClientSystemIM = 726
     ClientSystemIMAck = 727
-    ClientGetLicenses = 728
     ClientGetLegacyGameKey = 730
     ClientContentServerLogOn_Deprecated = 731
-    ClientAckVACBan2 = 732
-    ClientGetPurchaseReceipts = 736
     ClientGamesPlayed3_obsolete = 738
     ClientAckGuestPass = 740
     ClientRedeemGuestPass = 741
@@ -244,7 +241,6 @@ class EMsg(IntEnum):
     ClientRegisterKey = 743
     ClientInviteUserToClan = 744
     ClientAcknowledgeClanInvite = 745
-    ClientPurchaseWithMachineID = 746
     ClientAppUsageEvent = 747
     ClientLogOnResponse = 751
     ClientSetHeartbeatRate = 755
@@ -265,7 +261,6 @@ class EMsg(IntEnum):
     ClientGameConnectTokens = 779
     ClientLicenseList = 780
     ClientVACBanStatus = 782
-    ClientEncryptPct = 784
     ClientGetLegacyGameKeyResponse = 785
     ClientAddFriend = 791
     ClientAddFriendResponse = 792
@@ -317,8 +312,6 @@ class EMsg(IntEnum):
     GSStatusUpdate_Unused = 907
     GSServerType = 908
     GSPlayerList = 909
-    GSGetUserAchievementStatus = 910
-    GSGetUserAchievementStatusResponse = 911
     GSGetPlayStats = 918
     GSGetPlayStatsResponse = 919
     GSGetUserGroupStatus = 920
@@ -505,6 +498,7 @@ class EMsg(IntEnum):
     CMSetSecrets = 1704
     CMGetSecrets = 1705
     CMRemotePlayReplyPacket = 1706
+    CMRemotePlayOffline = 1707
     BaseGC = 2200
     GCCmdRevive = 2203
     GCCmdDown = 2206
@@ -551,7 +545,6 @@ class EMsg(IntEnum):
     SMExpensiveReport = 2902
     SMHourlyReport = 2903
     SMPartitionRenames = 2905
-    SMMonitorSpace = 2906
     SMTestNextBuildSchemaConversion = 2907
     SMTestNextBuildSchemaConversionResponse = 2908
     BaseTest = 3000
@@ -668,7 +661,6 @@ class EMsg(IntEnum):
     AMGetCommunityPrivacyState = 4116
     AMGetCommunityPrivacyStateResponse = 4117
     AMCheckClanInviteRateLimiting = 4118
-    UGSGetUserAchievementStatus = 4119
     AMGetIgnored = 4120
     AMGetIgnoredResponse = 4121
     AMSetIgnoredResponse = 4122
@@ -693,7 +685,6 @@ class EMsg(IntEnum):
     AMCheckClanMembershipResponse = 4161
     AMProbeClanMembershipList = 4162
     AMProbeClanMembershipListResponse = 4163
-    UGSGetUserAchievementStatusResponse = 4164
     AMGetFriendsLobbies = 4165
     AMGetFriendsLobbiesResponse = 4166
     AMGetUserFriendNewsResponse = 4172
@@ -1387,6 +1378,19 @@ class EMsg(IntEnum):
     RemoteClientWifiAPStatus = 9523
     RemoteClientPairWifiAP = 9524
     RemoteClientPairWifiAPResponse = 9525
+    RemoteClientDownloadScheduleChanged = 9526
+    RemoteClientDownloadItemScheduleChanged = 9527
+    RemoteClientAppUpdateStopped = 9528
+    RemoteClientAppDownloadStats = 9529
+    RemoteClientAppUploadStats = 9530
+    RemoteClientAppInfoUpdateComplete = 9531
+    k_eMsgRemoteClientDownloadsManagement = 9532
+    k_eMsgRemoteClientDownloadingAppID = 9533
+    k_eMsgRemoteClientPeerContentServerChanged = 9534
+    k_eMsgRemoteClientRestrictAutoUpdatesChanged = 9535
+    k_eMsgRemoteClientSuspendLanPeerContent = 9536
+    k_eMsgRemoteClientUpdateDownloadsController = 9537
+    RemoteClientAcceptAllEULAs = 9538
     ClientConcurrentSessionsBase = 9600
     ClientPlayingSessionState = 9600
     ClientKickPlayingSession = 9601

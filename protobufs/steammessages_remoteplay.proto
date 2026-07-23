@@ -116,6 +116,8 @@ enum EStreamControlMessage {
 	k_EStreamControlResumeControllerInput = 144;
 	k_EStreamControlVRConnectionReady = 145;
 	k_EStreamControlSetCursorScale = 146;
+	k_EStreamControlCaptureFailed = 147;
+	k_EStreamControlVideoOverflow = 148;
 }
 
 enum EStreamVersion {
@@ -139,9 +141,8 @@ enum EStreamVideoCodec {
 	k_EStreamVideoCodecVP9 = 3;
 	k_EStreamVideoCodecH264 = 4;
 	k_EStreamVideoCodecHEVC = 5;
-	k_EStreamVideoCodecORBX1 = 6;
-	k_EStreamVideoCodecORBX2 = 7;
 	k_EStreamVideoCodecAV1 = 8;
+	k_EStreamVideoCodecPyrowave = 9;
 }
 
 enum EStreamQualityPreference {
@@ -176,6 +177,12 @@ enum EStreamP2PScope {
 enum EStreamHostPlayAudioPreference {
 	k_EStreamHostPlayAudioDefault = 0;
 	k_EStreamHostPlayAudioAlways = 1;
+}
+
+enum EStreamHostDisplaySetting {
+	k_EStreamHostDisplaySettingNone = 0;
+	k_EStreamHostDisplaySettingClient = 1;
+	k_EStreamHostDisplaySettingCustom = 2;
 }
 
 enum EStreamingDataType {
@@ -217,6 +224,14 @@ enum EStreamActivity {
 	k_EStreamActivityDesktop = 3;
 	k_EStreamActivitySecureDesktop = 4;
 	k_EStreamActivityMusic = 5;
+}
+
+enum ECaptureFailedReason {
+	k_ECaptureFailedReasonNone = 0;
+	k_ECaptureFailedReasonUnknown = 1;
+	k_ECaptureFailedReasonPipewireRequired = 2;
+	k_ECaptureFailedReasonPipewirePermissions = 3;
+	k_ECaptureFailedReasonMacOSPermissions = 4;
 }
 
 enum EStreamDataMessage {
@@ -398,6 +413,7 @@ message CStreamingClientCaps {
 	repeated .EStreamColorspace supported_colorspaces = 13;
 	repeated .EStreamAudioCodec supported_audio_codecs = 14;
 	repeated .EStreamVideoCodec supported_video_codecs = 15;
+	optional bool can_toggle_fullscreen = 16;
 }
 
 message CStreamingClientConfig {
@@ -426,19 +442,31 @@ message CStreamingClientConfig {
 	repeated .CStreamVideoLimit decoder_limit = 24;
 	optional bool enable_unreliable_fec = 25 [default = false];
 	optional bool enable_video_av1 = 26 [default = false];
+	optional bool windowed = 27;
+	optional float window_pixel_density = 28;
+	optional int32 window_width = 29;
+	optional int32 window_height = 30;
+	optional int32 window_position_x = 31;
+	optional int32 window_position_y = 32;
+	optional int32 window_frame_offset_x = 33;
+	optional int32 window_frame_offset_y = 34;
+	optional bool enable_video_pyrowave = 35 [default = false];
 }
 
 message CStreamingServerConfig {
-	optional bool change_desktop_resolution = 1;
-	optional bool dynamically_adjust_resolution_OBSOLETE = 2;
-	optional bool enable_capture_nvfbc = 3;
-	optional bool enable_hardware_encoding_nvidia_OBSOLETE = 4;
-	optional bool enable_hardware_encoding_amd_OBSOLETE = 5;
-	optional bool enable_hardware_encoding_intel_OBSOLETE = 6;
-	optional int32 software_encoding_threads = 7;
-	optional bool enable_traffic_priority = 8;
-	optional .EStreamHostPlayAudioPreference host_play_audio = 9 [default = k_EStreamHostPlayAudioDefault];
-	optional bool enable_hardware_encoding = 10;
+	optional .EStreamHostPlayAudioPreference host_play_audio = 1 [default = k_EStreamHostPlayAudioDefault];
+	optional string custom_display_device = 2;
+	optional .EStreamHostDisplaySetting display_resolution_setting = 3 [default = k_EStreamHostDisplaySettingNone];
+	optional int32 custom_display_resolution_x = 4;
+	optional int32 custom_display_resolution_y = 5;
+	optional .EStreamHostDisplaySetting display_refresh_rate_setting = 6 [default = k_EStreamHostDisplaySettingNone];
+	optional string custom_display_refresh_rate = 7;
+	optional .EStreamHostDisplaySetting display_hdr_setting = 8 [default = k_EStreamHostDisplaySettingNone];
+	optional bool custom_display_hdr = 9;
+	optional bool enable_capture_nvfbc = 10;
+	optional bool enable_hardware_encoding = 11;
+	optional int32 software_encoding_threads = 12;
+	optional bool enable_traffic_priority = 13;
 }
 
 message CNegotiatedConfig {
@@ -849,6 +877,15 @@ message CControllerPersonalizationUpdateMsg {
 
 message CVRConnectionReady {
 	optional string connect_params = 1;
+}
+
+message CCaptureFailedMsg {
+	optional .ECaptureFailedReason reason = 1 [default = k_ECaptureFailedReasonNone];
+}
+
+message CStreamVideoOverflowMsg {
+	optional uint32 first_frame_id = 1;
+	optional uint32 last_frame_id = 2;
 }
 
 message CStreamDataLostMsg {

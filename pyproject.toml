@@ -28,7 +28,9 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "hatchling",
     "grpcio-tools (>=1.76.0,<2.0.0)",
+    "mypy-protobuf>=5.1.0",
     "pylint (>=4.0.4,<5.0.0)",
     "pytest (>=9.0.2,<10.0.0)",
     "pytest-asyncio (>=1.3.0,<2.0.0)",
@@ -44,11 +46,14 @@ docs = [
 "Bug Tracker" = "https://github.com/Steam-Style/steam/issues"
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "grpcio-tools", "mypy-protobuf"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/steam"]
+
+[tool.hatch.build.hooks.custom]
+path = "scripts/build_hooks.py"
 
 [tool.pylint.main]
 ignore = ["CVS", "protobufs", "enums"]

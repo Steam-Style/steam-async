@@ -82,23 +82,21 @@ message CMsgMouseLeave {
 
 message CMsgBrowserCreate {
 	optional uint32 request_id = 1;
-	optional string useragent = 3;
-	optional string user_css = 5;
-	optional bool native_dropdowns = 6;
-	optional float dpi_scaling = 7;
-	optional bool offscreen = 8 [default = true];
-	optional uint32 initial_width = 9 [default = 0];
-	optional uint32 initial_height = 10 [default = 0];
-	optional string window_icon = 11;
-	optional bool borderless = 12 [default = false];
-	optional string vroverlay_key = 13;
-	optional uint32 browser_type = 14 [default = 0];
-	optional int32 initial_top = 15 [default = -2147483648];
-	optional int32 initial_left = 16 [default = -2147483648];
-	optional bool only_allow_trusted_popups = 17 [default = false];
-	optional string initial_url = 18;
-	optional fixed64 hwnd_parent = 19;
-	optional uint32 creation_flags = 20 [default = 0];
+	optional string useragent = 2;
+	optional string user_css = 3;
+	optional bool native_dropdowns = 4;
+	optional float dpi_scaling = 5;
+	optional uint32 initial_width = 6;
+	optional uint32 initial_height = 7;
+	optional string window_icon = 8;
+	optional string vroverlay_key = 9;
+	optional uint32 browser_type = 10;
+	optional int32 initial_top = 11 [default = -2147483648];
+	optional int32 initial_left = 12 [default = -2147483648];
+	optional bool only_allow_trusted_popups = 13;
+	optional string initial_url = 14;
+	optional fixed64 hwnd_parent = 15;
+	optional uint32 creation_flags = 16;
 }
 
 message CMsgBrowserCreateResponse {
@@ -423,11 +421,6 @@ message CMsgPopupHTMLWindow {
 	optional uint32 creation_flags = 12;
 }
 
-message CMsgPopupHTMLWindowResponse {
-	optional uint32 browser_handle = 1;
-	optional bool bAllow = 2;
-}
-
 message CMsgSetHTMLTitle {
 	optional uint32 browser_handle = 1;
 	optional string title = 2;
@@ -594,33 +587,11 @@ message CMsgLinkAtPositionResponse {
 	optional bool binput = 6;
 }
 
-message CMsgZoomToElementAtPosition {
-	optional uint32 browser_handle = 1;
-	optional uint32 x = 2;
-	optional uint32 y = 3;
-}
-
-message CMsgZoomToElementAtPositionResponse {
-	optional uint32 browser_handle = 1;
-	optional float scale = 2;
-	optional float duration = 3;
-}
-
 message CMsgScalePageToValue {
 	optional uint32 browser_handle = 1;
 	optional float scale = 2;
 	optional float x = 3;
 	optional float y = 4;
-}
-
-message CMsgForcePopupsToDirectHWND {
-	optional uint32 browser_handle = 1;
-	optional bool force_direct_hwnd_popups = 2;
-}
-
-message CMsgScalePageToValueResponse {
-	optional uint32 browser_handle = 1;
-	optional float zoom = 2;
 }
 
 message CMsgSavePageToJPEG {
@@ -741,19 +712,6 @@ message CMsgNodeHasFocus {
 	optional bool bIsMainFrame = 8;
 }
 
-message CMsgZoomToFocusedElement {
-	optional uint32 browser_handle = 1;
-}
-
-message CMsgFocusedNodeText {
-	optional uint32 browser_handle = 1;
-}
-
-message CMsgFocusedNodeTextResponse {
-	optional uint32 browser_handle = 1;
-	optional string value = 2;
-}
-
 message CMsgBuildID {
 	optional uint64 build_id = 1;
 }
@@ -859,12 +817,6 @@ message CMsgJSRaiseException {
 	optional uint32 browser_handle = 1;
 	optional uint32 owning_browser_handle = 2;
 	optional string exception = 3;
-}
-
-message CMsgLoadLocalization {
-	optional uint32 browser_handle = 1;
-	optional string localization_path = 2;
-	optional string language = 3;
 }
 
 message CMsgNotifyUserActivation {
@@ -1072,4 +1024,9 @@ message CMsgSetAccessibilitySettings {
 	optional bool reduced_motion_enabled = 1;
 	optional .EAccessibilityContrastMode preferred_contrast = 2 [default = k_EBrowserContrastMode_NoPreference];
 	optional uint32 minimum_font_size = 3;
+}
+
+message CMsgSetBrowserViewDomainRequestMapping {
+	optional string request_domain = 1;
+	optional string default_local_path = 2;
 }
