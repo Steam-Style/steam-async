@@ -4,7 +4,7 @@ import fnmatch
 import os
 import sys
 from typing import Optional, Type
-from steam.enums.emsgs import EMsg
+from steam.enums.emsg import EMsg
 from google.protobuf.message import Message
 
 PROTOBUF_MASK = 0x80000000
