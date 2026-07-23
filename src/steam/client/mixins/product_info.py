@@ -1,46 +1,29 @@
 import logging
 import asyncio
 from typing import Optional, Any, TYPE_CHECKING
-from steam.enums.emsgs import EMsg
+from steam.enums.emsg import EMsg
+from steam.client.mixins.protocols import CMClientProtocol
 from steam.utils.vdf import VDFParser
 from google.protobuf.message import Message
+from steam.utils.protobuf_manager.protobufs.steammessages_clientserver_appinfo_pb2 import (
+    CMsgClientPICSProductInfoRequest,
+    CMsgClientPICSAccessTokenRequest,
+    CMsgClientPICSAccessTokenResponse,
+    CMsgClientPICSProductInfoResponse
+)
 
 if TYPE_CHECKING:
-    class CMsgClientPICSProductInfoRequest:
-        apps: Any
-        appids: Any
-
-    class CMsgClientPICSAccessTokenRequest:
-        appids: Any
-
-    class CMsgClientPICSAccessTokenResponse:
-        app_access_tokens: Any
-        def ParseFromString(self, data: bytes) -> None: ...
-
-    class CMsgClientPICSProductInfoResponse:
-        def ParseFromString(self, data: bytes) -> None: ...
+    _Base = CMClientProtocol
 else:
-    from steam.utils.protobuf_manager.protobufs.steammessages_clientserver_appinfo_pb2 import (
-        CMsgClientPICSProductInfoRequest,
-        CMsgClientPICSAccessTokenRequest,
-        CMsgClientPICSAccessTokenResponse,
-        CMsgClientPICSProductInfoResponse
-    )
+    _Base = object
 
 
-class ProductInfoMixin:
+class ProductInfoMixin(_Base):
     """
     Mixin providing product info functionality for the Steam client.
     """
 
     _log: logging.Logger = logging.getLogger(__name__)
-
-    if TYPE_CHECKING:
-        async def send_protobuf_message(
-            self, emsg: EMsg, message: Message, steam_id: Optional[int] = None) -> None: ...
-
-        async def wait_for(
-            self, event: Any, timeout: Optional[float] = None, check: Optional[Any] = None) -> Any: ...
 
     async def get_product_info(self, app_ids: list[int], access_tokens: Optional[dict[int, int]] = None, timeout: int = 20) -> Optional[dict[int, dict[str, Any]]]:
         """
@@ -55,7 +38,7 @@ class ProductInfoMixin:
             A dictionary mapping app IDs to their parsed product info, or None if the request times out.
         """
         access_tokens = access_tokens if access_tokens is not None else {}
-        request: Any = CMsgClientPICSProductInfoRequest()
+        request = CMsgClientPICSProductInfoRequest()
 
         for app_id in app_ids:
             app = request.apps.add()
@@ -102,7 +85,7 @@ class ProductInfoMixin:
         Returns:
             A dictionary mapping app IDs to their access tokens.
         """
-        request: Any = CMsgClientPICSAccessTokenRequest()
+        request = CMsgClientPICSAccessTokenRequest()
         request.appids.extend(app_ids)
 
         await self.send_protobuf_message(EMsg.ClientPICSAccessTokenRequest, request)

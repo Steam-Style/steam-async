@@ -1,31 +1,21 @@
 import logging
 import asyncio
-from typing import Optional, Any, Protocol, TYPE_CHECKING
-from steam.enums.emsgs import EMsg
+from typing import Optional, Any, TYPE_CHECKING
+from steam.enums.emsg import EMsg
 from steam.enums.common import EResult
+from steam.client.mixins.protocols import CMClientProtocol
 from steam.utils.protobuf_manager import ProtobufManager
 from steam.utils.packet import SteamPacket
+from steam.utils.protobuf_manager.protobufs.steammessages_base_pb2 import CMsgProtoBufHeader
+from steam.utils.protobuf_manager.protobufs.steammessages_clientserver_login_pb2 import CMsgClientHeartBeat
 
 if TYPE_CHECKING:
-    class CMsgProtoBufHeader:
-        steamid: int
-        def ParseFromString(
-            self, data: bytes) -> None: ...  # pylint: disable=unused-argument
-
-    class CMsgMulti:
-        size_unzipped: int
-        message_body: bytes
-        def ParseFromString(
-            self, data: bytes) -> None: ...  # pylint: disable=unused-argument
-
-    class CMsgClientHeartBeat:
-        ...
+    _Base = CMClientProtocol
 else:
-    from steam.utils.protobuf_manager.protobufs.steammessages_base_pb2 import CMsgMulti, CMsgProtoBufHeader
-    from steam.utils.protobuf_manager.protobufs.steammessages_clientserver_login_pb2 import CMsgClientHeartBeat
+    _Base = object
 
 
-class LogonMixin:
+class LogonMixin(_Base):
     """
     Mixin providing logon functionality for the Steam client.
     """
@@ -33,22 +23,10 @@ class LogonMixin:
     _log: logging.Logger = logging.getLogger(__name__)
     _heartbeat_task: Optional[asyncio.Task[None]] = None
 
-    if TYPE_CHECKING:
-        connected: bool
-        machine_id: bytes
-        logged_in: bool
-        steam_id: int
-
-        class CMsgMultiProto(Protocol):
-            size_unzipped: int
-            message_body: bytes
-            def ParseFromString(self, data: bytes) -> Any: ...
-
-        async def send_protobuf_message(
-            self, emsg: EMsg, message: Any, steam_id: Optional[int] = None) -> None: ...
-
-        async def wait_for(
-            self, event: Any, timeout: Optional[float] = None, check: Optional[Any] = None) -> Any: ...
+    connected: bool
+    machine_id: bytes
+    logged_in: bool
+    steam_id: int
 
     async def login(self, username: Optional[str] = None, password: Optional[str] = None, auth_code: Optional[str] = None, two_factor_code: Optional[str] = None) -> EResult:
         """
