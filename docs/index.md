@@ -12,11 +12,7 @@ To get started, check out the [API Reference](reference.md) to see the available
 
 ## Installation
 
-You can either install the library through PyPI or our official GitHub repository.
-
-```bash
-pip install steam-python # Coming soon
-```
+You can either install the library through our official GitHub repository.
 
 ```
 pip install git+https://github.com/Steam-Style/steam-python

@@ -13,12 +13,6 @@ A fast and lightweight Python interface for interacting with Steam. Largely insp
 ## Installation
 
 ```bash
-pip install steam-python # Coming soon
-```
-
-or
-
-```bash
 pip install git+https://github.com/Steam-Style/steam-python
 ```
 
