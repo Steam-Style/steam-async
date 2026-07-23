@@ -1,4 +1,5 @@
 import asyncio
+import inspect
 import logging
 from typing import Callable, Any, Optional, Union
 from collections import defaultdict
@@ -50,7 +51,7 @@ class EventEmitter:
         if event in self._listeners:
             for callback in self._listeners[event]:
                 try:
-                    if asyncio.iscoroutinefunction(callback):
+                    if inspect.iscoroutinefunction(callback):
                         asyncio.create_task(callback(*args, **kwargs))
                     else:
                         callback(*args, **kwargs)

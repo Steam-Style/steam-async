@@ -1,7 +1,7 @@
 import binascii
 import logging
 from typing import TYPE_CHECKING
-from steam.enums.emsgs import EMsg
+from steam.enums.emsg import EMsg
 from steam.utils.structs import MsgChannelEncryptRequest, MsgChannelEncryptResponse, MsgHdr
 from steam.utils.packet import SteamPacket
 from steam.utils.crypto import generate_session_key

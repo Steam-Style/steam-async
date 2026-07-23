@@ -6,7 +6,7 @@ import struct
 import random
 from typing import Optional, Any, cast
 from google.protobuf.message import Message
-from steam.enums.emsgs import EMsg
+from steam.enums.emsg import EMsg
 from steam.utils.protobuf_manager import ProtobufManager
 from steam.utils.protobuf_manager.protobufs.steammessages_base_pb2 import CMsgProtoBufHeader  # type: ignore
 from steam.enums.common import EResult
