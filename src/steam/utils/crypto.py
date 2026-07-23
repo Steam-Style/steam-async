@@ -81,8 +81,8 @@ def symmetric_encrypt_with_iv(message: bytes, key: bytes, iv: bytes) -> bytes:
     Returns:
         The encrypted message as bytes.
     """
-    encrypted_iv = AES.new(key, AES.MODE_ECB).encrypt(iv)  # type: ignore
-    cipher = AES.new(key, AES.MODE_CBC, iv)  # type: ignore
+    encrypted_iv = AES.new(key, AES.MODE_ECB).encrypt(iv)
+    cipher = AES.new(key, AES.MODE_CBC, iv)
     return encrypted_iv + cipher.encrypt(pad(message, 16))
 
 
@@ -134,7 +134,7 @@ def symmetric_decrypt_iv(message: bytes, key: bytes) -> bytes:
 
     Returns:
         The decrypted IV as bytes."""
-    return AES.new(key, AES.MODE_ECB).decrypt(message[:16])  # type: ignore
+    return AES.new(key, AES.MODE_ECB).decrypt(message[:16])
 
 
 def symmetric_decrypt_with_iv(message: bytes, key: bytes, iv: bytes) -> bytes:
@@ -149,7 +149,7 @@ def symmetric_decrypt_with_iv(message: bytes, key: bytes, iv: bytes) -> bytes:
     Returns:
         The decrypted message as bytes.
     """
-    cipher = AES.new(key, AES.MODE_CBC, iv)  # type: ignore
+    cipher = AES.new(key, AES.MODE_CBC, iv)
     return unpad(cipher.decrypt(message[16:]), 16)
 
 

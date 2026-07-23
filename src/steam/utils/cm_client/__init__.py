@@ -4,11 +4,11 @@ import time
 import logging
 import struct
 import random
-from typing import Optional, Any, cast
+from typing import Optional, Any
 from google.protobuf.message import Message
 from steam.enums.emsg import EMsg
 from steam.utils.protobuf_manager import ProtobufManager
-from steam.utils.protobuf_manager.protobufs.steammessages_base_pb2 import CMsgProtoBufHeader  # type: ignore
+from steam.utils.protobuf_manager.protobufs.steammessages_base_pb2 import CMsgProtoBufHeader
 from steam.enums.common import EResult
 from .constants import (
     STEAM_CM_LIST_URL,
@@ -245,7 +245,7 @@ class CMClient(EventEmitter):
             self._log.error("The client is not connected")
             return
 
-        header = cast(Any, CMsgProtoBufHeader())
+        header = CMsgProtoBufHeader()
         header.steamid = steam_id if steam_id is not None else self.steam_id
         header.client_sessionid = self.session_id
 

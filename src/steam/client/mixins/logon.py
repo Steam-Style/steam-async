@@ -144,7 +144,7 @@ class LogonMixin(_Base):
             if result == EResult.OK:
                 self.logged_in = True
                 if packet.header and isinstance(packet.header, CMsgProtoBufHeader):
-                    self.steam_id = packet.header.steamid  # type: ignore
+                    self.steam_id = packet.header.steamid
                     self._log.info(f"Logged in with SteamID: {self.steam_id}")
 
                 self._start_heartbeat()
