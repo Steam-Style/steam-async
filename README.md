@@ -74,8 +74,6 @@ This project uses uv for Python dependency management.
 
 <div align="center">
 
-**🌟 If this project helps you, please consider giving it a star or sponsoring us!**
-
 [![GitHub Stars](https://img.shields.io/github/stars/Steam-Style/website?style=social)](https://github.com/Steam-Style/website/stargazers)
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/Steam-Style?style=social)](https://github.com/sponsors/Steam-Style)
 
