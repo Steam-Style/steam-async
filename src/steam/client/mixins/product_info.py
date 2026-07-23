@@ -4,7 +4,6 @@ from typing import Optional, Any, TYPE_CHECKING
 from steam.enums.emsg import EMsg
 from steam.client.mixins.protocols import CMClientProtocol
 from steam.utils.vdf import VDFParser
-from google.protobuf.message import Message
 from steam.utils.protobuf_manager.protobufs.steammessages_clientserver_appinfo_pb2 import (
     CMsgClientPICSProductInfoRequest,
     CMsgClientPICSAccessTokenRequest,
