@@ -1,22 +1,10 @@
 import struct
 import io
-from typing import Union, Any, TYPE_CHECKING
-from steam.enums.emsgs import EMsg
+from typing import Union, Any
+from steam.enums.emsg import EMsg
 from .protobuf_manager import ProtobufManager
 from .structs import MsgHdr
-
-
-if TYPE_CHECKING:
-    class CMsgProtoBufHeader:
-        steamid: int
-        def ParseFromString(self, data: bytes) -> None: ...
-
-    class CMsgMulti:
-        size_unzipped: int
-        message_body: bytes
-        def ParseFromString(self, data: bytes) -> None: ...
-else:
-    from steam.utils.protobuf_manager.protobufs.steammessages_base_pb2 import CMsgProtoBufHeader, CMsgMulti
+from steam.utils.protobuf_manager.protobufs.steammessages_base_pb2 import CMsgProtoBufHeader, CMsgMulti
 
 import gzip
 import zipfile
