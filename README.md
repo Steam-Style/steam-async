@@ -76,11 +76,11 @@ This project uses uv for Python dependency management.
 
 <div align="center">
 
-[![GitHub Stars](https://img.shields.io/github/stars/Steam-Style/website?style=social)](https://github.com/Steam-Style/website/stargazers)
+[![GitHub Stars](https://img.shields.io/github/stars/Steam-Style/steam-python?style=social)](https://github.com/Steam-Style/steam-python/stargazers)
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/Steam-Style?style=social)](https://github.com/sponsors/Steam-Style)
 
 Made with ❤️ by the Steam Style team
 
-[Report an Issue](https://github.com/Steam-Style/website/issues) • [Visit Steam Style](https://steam.style)
+[Report an Issue](https://github.com/Steam-Style/steam-python/issues) • [Visit Steam Style](https://steam.style)
 
 </div>
