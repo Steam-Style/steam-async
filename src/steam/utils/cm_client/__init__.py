@@ -14,7 +14,6 @@ from .constants import (
     STEAM_CM_LIST_URL,
     MAGIC_HEADER,
     CONNECTION_TIMEOUT,
-    MAX_CONNECTIONS
 )
 from steam.utils.crypto import (
     symmetric_encrypt,
@@ -67,24 +66,6 @@ class CMClient(EventEmitter):
         except (asyncio.TimeoutError, OSError, ValueError):
             return float("inf")
 
-    async def _find_fastest_server(self) -> tuple[Optional[tuple[str, int]], float]:
-        semaphore = asyncio.Semaphore(MAX_CONNECTIONS)
-
-        async def bounded_test(host: str, port: int) -> float:
-            async with semaphore:
-                return await self._test_server_latency(host, port)
-
-        tasks = [bounded_test(host, port) for (host, port) in self.server_list]
-        latencies = await asyncio.gather(*tasks)
-        fastest_server = (None, float("inf"))
-
-        for (server_ip), latency in zip(self.server_list, latencies):
-            if latency < fastest_server[1]:
-                fastest_server = (server_ip, latency)
-
-        self.fastest_server = fastest_server
-        return fastest_server
-
     async def get_server_list(self) -> list[tuple[str, int]]:
         """
         Fetches a list of available servers.
@@ -113,7 +94,7 @@ class CMClient(EventEmitter):
             self._log.error(f"Failed to fetch server list: {e}")
             return []
 
-    async def connect(self, retry: bool = False, use_fastest: bool = False) -> EResult:
+    async def connect(self, retry: bool = False) -> EResult:
         """
         Connects to a server.
 
@@ -126,7 +107,7 @@ class CMClient(EventEmitter):
             EResult.OK if connection is successful, EResult.ConnectFailed otherwise.
         """
         while True:
-            server = await self._select_server(use_fastest)
+            server = await self._select_server()
 
             if not server:
                 return EResult.ConnectFailed
@@ -177,21 +158,9 @@ class CMClient(EventEmitter):
 
                 break
 
-    async def _select_server(self, use_fastest: bool) -> Optional[tuple[str, int]]:
+    async def _select_server(self) -> Optional[tuple[str, int]]:
         if not self.server_list:
             await self.get_server_list()
-
-        if use_fastest or self.fastest_server[0] is not None:
-            if self.fastest_server[0] is None:
-                await self._find_fastest_server()
-
-            return self.fastest_server[0]
-
-        for host, port in self.server_list:
-            if await self._test_server_latency(host, port) < float("inf"):
-                return (host, port)
-
-        await self.get_server_list()
 
         for host, port in self.server_list:
             if await self._test_server_latency(host, port) < float("inf"):
