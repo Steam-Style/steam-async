@@ -14,7 +14,7 @@ class EMsg(IntEnum):
     JobHeartbeat = 123
     HubConnect = 124
     Subscribe = 126
-    k_EMRouteMessage = 127
+    RouteMessage = 127
     WGRequest = 130
     WGResponse = 131
     KeepAlive = 132
@@ -1143,7 +1143,7 @@ class EMsg(IntEnum):
     NonStdMsgDFSTransfer = 6807
     NonStdMsgTests = 6808
     NonStdMsgUMQpipeAAPL = 6809
-    k_EMSgNonStdMsgSyslog = 6810
+    NonStdMsgSyslog = 6810
     NonStdMsgSteam2Emulator = 6812
     NonStdMsgRTMPServer = 6813
     NonStdMsgWebSocket = 6814
@@ -1384,12 +1384,12 @@ class EMsg(IntEnum):
     RemoteClientAppDownloadStats = 9529
     RemoteClientAppUploadStats = 9530
     RemoteClientAppInfoUpdateComplete = 9531
-    k_eMsgRemoteClientDownloadsManagement = 9532
-    k_eMsgRemoteClientDownloadingAppID = 9533
-    k_eMsgRemoteClientPeerContentServerChanged = 9534
-    k_eMsgRemoteClientRestrictAutoUpdatesChanged = 9535
-    k_eMsgRemoteClientSuspendLanPeerContent = 9536
-    k_eMsgRemoteClientUpdateDownloadsController = 9537
+    RemoteClientDownloadsManagement = 9532
+    RemoteClientDownloadingAppID = 9533
+    RemoteClientPeerContentServerChanged = 9534
+    RemoteClientRestrictAutoUpdatesChanged = 9535
+    RemoteClientSuspendLanPeerContent = 9536
+    RemoteClientUpdateDownloadsController = 9537
     RemoteClientAcceptAllEULAs = 9538
     ClientConcurrentSessionsBase = 9600
     ClientPlayingSessionState = 9600

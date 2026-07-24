@@ -55,8 +55,10 @@ def generate_emsg_enum():
     for match in pattern.finditer(enum_body):
         name = match.group(1)
 
-        if name.startswith("k_EMsg"):
-            name = name[6:]
+        for prefix in ["k_emsg", "k_em"]:
+            if name.lower().startswith(prefix):
+                name = name[len(prefix):]
+                break
 
         value = int(match.group(2))
         members.append((name, value))
