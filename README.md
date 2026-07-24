@@ -1,8 +1,9 @@
 # Steam Python
 
-![Documentation](https://img.shields.io/badge/Docs-brightgreen?link=https%3A%2F%2Fpython.steam.style)
-![Python Version](https://img.shields.io/badge/python-3.10%2B-blue)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![GitHub Sponsors](https://img.shields.io/github/sponsors/Steam-Style)](https://github.com/sponsors/Steam-Style)
+[![Python Version](https://img.shields.io/badge/python-3.10%2B-blue)](https://python.org/downloads/)
+[![Documentation](https://img.shields.io/badge/Docs-brightgreen?link=https%3A%2F%2Fpython.steam.style)](https://python.steam.style)
 
 A fast and lightweight Python interface for interacting with Steam. Largely inspired by [Valve Python's Steam package](https://github.com/ValvePython/steam) and [the fork by Solstice Game Studios](https://github.com/solsticegamestudios/steam), this library introduces various tweaks to modernize and improve the structure, including complete typing support and modern dependencies. Some logic is also taken from [SteamRE's SteamKit](https://github.com/SteamRE/SteamKit).
 
@@ -68,6 +69,7 @@ This project uses uv for Python dependency management.
    git clone https://github.com/Steam-Style/steam-python.git
    cd steam-python
    uv sync --all-groups
+   uv build
    ```
 
 ---
