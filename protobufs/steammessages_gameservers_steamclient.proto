@@ -86,20 +86,31 @@ message CGameServers_GameServerQuery_Response {
 }
 
 message CGameServers_FriendsQuery_Request {
-	optional uint32 server_ip = 1;
-	optional uint32 server_port = 2;
+	message Server {
+		optional uint32 server_ip = 1;
+		optional uint32 server_port = 2;
+		optional fixed64 steamid = 4;
+	}
+
+	repeated .CGameServers_FriendsQuery_Request.Server servers = 1;
+	repeated fixed64 friends = 2;
 	optional uint32 app_id = 3;
 }
 
 message CGameServers_FriendsQuery_Response {
-	message Player {
-		optional fixed64 steamid = 1;
-		optional uint32 time_played = 2;
+	message Server {
+		message Friend {
+			optional fixed64 steamid = 1;
+			optional uint32 time_played = 2;
+			optional uint32 time_current = 3;
+		}
+
+		repeated .CGameServers_FriendsQuery_Response.Server.Friend friends = 1;
+		optional fixed64 steamid_server = 2;
+		optional uint32 app_id = 3;
 	}
 
-	repeated .CGameServers_FriendsQuery_Response.Player players = 1;
-	optional fixed64 steamid = 2;
-	optional uint32 app_id = 3;
+	repeated .CGameServers_FriendsQuery_Response.Server servers = 1;
 }
 
 message CGameServers_ReportServerPingReply_Notification {

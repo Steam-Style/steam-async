@@ -5,6 +5,12 @@ import "enums.proto";
 option optimize_for = SPEED;
 option cc_generic_services = false;
 
+enum EChildProcessQueryCommand {
+	k_EChildProcessQueryCommand_Invalid = 0;
+	k_EChildProcessQueryCommand_GpuTopology = 1;
+	k_EChildProcessQueryCommand_Max = 2;
+}
+
 message CMsgChildProcessQueryResponse {
 	oneof response {
 		.CMsgChildProcessQueryGpuTopology gpu_topology = 1;

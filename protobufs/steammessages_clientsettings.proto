@@ -86,8 +86,6 @@ message CMsgSettingVariant {
 
 message CMsgClientSettings {
 	optional bool no_save_personal_info = 1 [(setting_store) = k_EClientSettingStore_ConfigStore_Install, (setting_name) = "Software\\Valve\\Steam\\NoSavePersonalInfo"];
-	optional bool in_client_beta = 3 [(setting_store) = k_EClientSettingStore_CustomFunc, (setting_pre_login) = true];
-	optional bool is_steam_sideloaded = 4 [(setting_store) = k_EClientSettingStore_CustomFunc, (setting_pre_login) = true];
 	optional string preferred_monitor = 5 [(setting_store) = k_EClientSettingStore_ConfigStore_Install, (setting_name) = "BigPicture/Monitor"];
 	optional bool steam_cef_gpu_blocklist_disabled = 6 [(setting_store) = k_EClientSettingStore_Registry, (setting_name) = "HKEY_CURRENT_USER\\Software\\Valve\\Steam\\CEFGPUBlocklistDisabled"];
 	optional bool bigpicture_windowed = 7 [(setting_store) = k_EClientSettingStore_ConfigStore_Install, (setting_name) = "BigPicture/Windowed", (setting_pre_login) = true];
@@ -301,6 +299,7 @@ message CMsgClientSettings {
 	optional bool steamos_cec_suspend_device = 22021 [(setting_store) = k_EClientSettingStore_ConfigStore_Install, (setting_name) = "SteamOS/CECSuspendDevice", (setting_default_bool) = true];
 	optional bool steamos_cec_wake_tv = 22022 [(setting_store) = k_EClientSettingStore_ConfigStore_Install, (setting_name) = "SteamOS/CECWakeTV", (setting_default_bool) = true];
 	optional bool steamos_cec_wake_device = 22023 [(setting_store) = k_EClientSettingStore_ConfigStore_Install, (setting_name) = "SteamOS/CECWakeDevice", (setting_default_bool) = true];
+	optional bool steamos_ec_logging_enabled = 22024 [(setting_store) = k_EClientSettingStore_ConfigStore_Install, (setting_name) = "SteamOS/ECLoggingEnabled", (setting_default_bool) = false];
 	optional bool setting_validation_bool = 23001 [(setting_store) = k_EClientSettingStore_ConfigStore_Install, (setting_name) = "SettingValidation/DummyBool"];
 	optional .EHDRVisualization setting_validation_enum = 23002 [default = k_EHDRVisualization_None, (setting_store) = k_EClientSettingStore_ConfigStore_Install, (setting_name) = "SettingValidation/DummyEnum"];
 	optional int32 setting_validation_int32 = 23003 [(setting_store) = k_EClientSettingStore_ConfigStore_Install, (setting_name) = "SettingValidation/DummyInt32"];
