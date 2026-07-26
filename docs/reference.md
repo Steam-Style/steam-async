@@ -8,4 +8,3 @@
 ::: utils.crypto
 ::: utils.event_emitter
 ::: utils.handshake
-::: utils.vdf
