@@ -26,7 +26,7 @@ jobs:
       - name: Install dependencies
         run: uv sync
 
-      - name: Sync protos
+      - name: Sync protobufs
         run: python scripts/sync_protobufs.py
 
       - name: Commit if changed
@@ -34,5 +34,5 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add protobufs/
-          git diff --staged --quiet || git commit -m "Sync protos from upstream"
+          git diff --staged --quiet || git commit -m "Sync protobufs from upstream"
           git push
