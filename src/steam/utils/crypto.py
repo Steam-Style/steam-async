@@ -1,9 +1,9 @@
+from os import urandom
+from base64 import b64decode
 from Crypto.Cipher import PKCS1_OAEP, AES
 from Crypto.Hash import SHA1, HMAC
 from Crypto.PublicKey.RSA import import_key
 from Crypto.Util.Padding import pad, unpad
-from os import urandom
-from base64 import b64decode
 
 
 class UniverseKey:
@@ -30,8 +30,9 @@ def generate_session_key(hmac_secret: bytes = b"") -> tuple[bytes, bytes]:
         A tuple containing the session key and its encrypted form.
     """
     session_key = urandom(32)
-    encrypted_session_key = PKCS1_OAEP.new(
-        UniverseKey.Public, SHA1).encrypt(session_key + hmac_secret)
+    encrypted_session_key = PKCS1_OAEP.new(UniverseKey.Public, SHA1).encrypt(
+        session_key + hmac_secret
+    )
 
     return (session_key, encrypted_session_key)
 

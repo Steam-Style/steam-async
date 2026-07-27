@@ -2,9 +2,13 @@ import binascii
 import logging
 from typing import TYPE_CHECKING
 from steam.enums.emsg import EMsg
-from steam.utils.structs import MsgChannelEncryptRequest, MsgChannelEncryptResponse, MsgHdr
 from steam.utils.packet import SteamPacket
 from steam.utils.crypto import generate_session_key
+from steam.utils.structs import (
+    MsgChannelEncryptRequest,
+    MsgChannelEncryptResponse,
+    MsgHdr,
+)
 
 if TYPE_CHECKING:
     from steam.utils.cm_client import CMClient
@@ -32,7 +36,7 @@ async def perform_handshake(client: "CMClient") -> bool:
         return False
 
     packet = SteamPacket.parse(message)
-    LOG.info(f"Received: {packet.emsg}")
+    LOG.info("Received: %s", packet.emsg)
 
     if packet.emsg != EMsg.ChannelEncryptRequest or packet.body is None:
         LOG.error("Did not receive ChannelEncryptRequest")
@@ -40,7 +44,7 @@ async def perform_handshake(client: "CMClient") -> bool:
 
     request = MsgChannelEncryptRequest(packet.body)
     session_key, encrypted_key = generate_session_key(request.challenge)
-    crc = binascii.crc32(encrypted_key) & 0xffffffff
+    crc = binascii.crc32(encrypted_key) & 0xFFFFFFFF
 
     response = MsgChannelEncryptResponse()
     response.key_size = len(encrypted_key)
@@ -55,15 +59,13 @@ async def perform_handshake(client: "CMClient") -> bool:
     message = await client.listen()
 
     if message is None:
-        LOG.error(
-            "No response received after sending ChannelEncryptResponse")
+        LOG.error("No response received after sending ChannelEncryptResponse")
         return False
 
     packet = SteamPacket.parse(message)
 
     if packet.emsg != EMsg.ChannelEncryptResult:
-        LOG.error(
-            "Did not receive ChannelEncryptResult after sending response")
+        LOG.error("Did not receive ChannelEncryptResult after sending response")
         return False
 
     client.session_key = session_key

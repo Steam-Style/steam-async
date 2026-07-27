@@ -1,13 +1,15 @@
 import struct
 import io
 from typing import Union, Any
-from steam.enums.emsg import EMsg
-from .protobuf_manager import ProtobufManager
-from .structs import MsgHdr
-from steam.utils.protobuf_manager.protobufs.steammessages_base_pb2 import CMsgProtoBufHeader, CMsgMulti
-
 import gzip
 import zipfile
+from steam.enums.emsg import EMsg
+from steam.utils.structs import MsgHdr
+from steam.utils.protobuf_manager import ProtobufManager
+from steam.utils.protobuf_manager.protobufs.steammessages_base_pb2 import (
+    CMsgProtoBufHeader,
+    CMsgMulti,
+)
 
 
 class SteamPacket:
@@ -94,7 +96,7 @@ class SteamPacket:
             return []
 
         if multi.size_unzipped:
-            if multi.message_body.startswith(b'PK'):
+            if multi.message_body.startswith(b"PK"):
                 with zipfile.ZipFile(io.BytesIO(multi.message_body)) as zf:
                     data = zf.read(zf.namelist()[0])
             else:
@@ -108,7 +110,7 @@ class SteamPacket:
         while offset < len(data):
             msg_len = struct.unpack_from("<I", data, offset)[0]
             offset += 4
-            msg_data = data[offset: offset + msg_len]
+            msg_data = data[offset : offset + msg_len]
             offset += msg_len
             packets.append(SteamPacket.parse(msg_data))
 

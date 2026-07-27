@@ -4,8 +4,9 @@ import fnmatch
 import os
 import sys
 from typing import Optional, Type
-from steam.enums.emsg import EMsg
 from google.protobuf.message import Message
+
+from steam.enums.emsg import EMsg
 
 PROTOBUF_MASK = 0x80000000
 
@@ -19,7 +20,7 @@ protobuf_overrides = {
     EMsg.ClientChatOfflineMessageNotification: "cmsgclientofflinemessagenotification",
 }
 
-cmsg_lookup: dict[str, Type[Message]] = dict()
+cmsg_lookup: dict[str, Type[Message]] = {}
 protobufs_path = os.path.join(os.path.dirname(__file__), "protobufs")
 
 if protobufs_path not in sys.path:
@@ -31,11 +32,12 @@ for module_info in pkgutil.iter_modules([protobufs_path]):
 
     try:
         module = importlib.import_module(
-            f".protobufs.{module_info.name}", package=__name__)
+            f".protobufs.{module_info.name}", package=__name__
+        )
     except ImportError:
         continue
 
-    cmsg_list = fnmatch.filter(module.__dict__, 'CMsg*')
+    cmsg_list = fnmatch.filter(module.__dict__, "CMsg*")
 
     for cmsg_name in cmsg_list:
         cmsg_lookup[cmsg_name.lower()] = getattr(module, cmsg_name)

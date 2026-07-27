@@ -17,6 +17,7 @@ class MsgHdr(StructBase):
     """
     Standard 20-byte Header for non-protobuf messages.
     """
+
     FMT = "<IQQ"
     SIZE = struct.calcsize(FMT)
 
@@ -29,7 +30,8 @@ class MsgHdr(StructBase):
         """
         if data:
             self.emsg, self.target_job_id, self.source_job_id = struct.unpack(
-                self.FMT, data)
+                self.FMT, data
+            )
         else:
             self.emsg = 0
             self.target_job_id = 0xFFFFFFFFFFFFFFFF
@@ -49,6 +51,7 @@ class MsgChannelEncryptRequest(StructBase):
     """
     Received from Steam to start handshake.
     """
+
     FMT = "<II"
 
     def __init__(self, data: bytes):
@@ -61,13 +64,14 @@ class MsgChannelEncryptRequest(StructBase):
         struct_data = struct.unpack_from(self.FMT, data)
         self.protocol_version: int = struct_data[0]
         self.universe: int = struct_data[1]
-        self.challenge: bytes = data[struct.calcsize(self.FMT):]
+        self.challenge: bytes = data[struct.calcsize(self.FMT) :]
 
 
 class MsgChannelEncryptResponse(StructBase):
     """
     Sent to Steam to negotiate encryption.
     """
+
     FMT = "<II"
 
     def __init__(self):
@@ -86,4 +90,8 @@ class MsgChannelEncryptResponse(StructBase):
         Returns:
             The packed bytes.
         """
-        return struct.pack(self.FMT, self.protocol_version, self.key_size) + self.key + struct.pack("<I", self.crc)
+        return (
+            struct.pack(self.FMT, self.protocol_version, self.key_size)
+            + self.key
+            + struct.pack("<I", self.crc)
+        )
