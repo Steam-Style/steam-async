@@ -6,8 +6,12 @@ from steam.enums.common import EResult
 from steam.client.mixins.protocols import CMClientProtocol
 from steam.utils.protobuf_manager import ProtobufManager
 from steam.utils.packet import SteamPacket
-from steam.utils.protobuf_manager.protobufs.steammessages_base_pb2 import CMsgProtoBufHeader
-from steam.utils.protobuf_manager.protobufs.steammessages_clientserver_login_pb2 import CMsgClientHeartBeat
+from steam.utils.protobuf_manager.protobufs.steammessages_base_pb2 import (
+    CMsgProtoBufHeader,
+)
+from steam.utils.protobuf_manager.protobufs.steammessages_clientserver_login_pb2 import (
+    CMsgClientHeartBeat,
+)
 
 if TYPE_CHECKING:
     _Base = CMClientProtocol
@@ -28,7 +32,13 @@ class LogonMixin(_Base):
     logged_in: bool
     steam_id: int
 
-    async def login(self, username: Optional[str] = None, password: Optional[str] = None, auth_code: Optional[str] = None, two_factor_code: Optional[str] = None) -> EResult:
+    async def login(
+        self,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
+        auth_code: Optional[str] = None,
+        two_factor_code: Optional[str] = None,
+    ) -> EResult:
         """
         Logs in the client with the provided credentials or anonymously if none are
             provided
@@ -71,9 +81,11 @@ class LogonMixin(_Base):
             message.two_factor_code = two_factor_code
 
         steam_id = 76561197960265728
+
+        response_future = self.create_listener(EMsg.ClientLogOnResponse)
         await self.send_protobuf_message(EMsg.ClientLogon, message, steam_id=steam_id)
 
-        return await self._wait_for_logon_result()
+        return self._handle_logon_response(await response_future)
 
     async def anonymous_login(self) -> EResult:
         """
@@ -100,9 +112,11 @@ class LogonMixin(_Base):
         message.machine_id = self.machine_id
 
         steam_id = 117093590311632896
+
+        response_future = self.create_listener(EMsg.ClientLogOnResponse)
         await self.send_protobuf_message(EMsg.ClientLogon, message, steam_id=steam_id)
 
-        return await self._wait_for_logon_result()
+        return self._handle_logon_response(await response_future)
 
     async def logout(self) -> EResult:
         """
@@ -128,24 +142,20 @@ class LogonMixin(_Base):
         self._stop_heartbeat()
         return EResult.OK
 
-    async def _wait_for_logon_result(self, timeout: int = 20) -> EResult:
-        try:
-            packet = await self.wait_for(EMsg.ClientLogOnResponse, timeout=timeout)
-            return self._handle_logon_response(packet)
-        except asyncio.TimeoutError:
-            self._log.error("Timed out waiting for logon response")
-            return EResult.Fail
-
     def _handle_logon_response(self, packet: SteamPacket) -> EResult:
-        if packet.body and not isinstance(packet.body, (bytes, bytearray, memoryview)) and hasattr(packet.body, "eresult"):
+        if (
+            packet.body
+            and not isinstance(packet.body, (bytes, bytearray, memoryview))
+            and hasattr(packet.body, "eresult")
+        ):
             result = EResult(packet.body.eresult)
-            self._log.info(f"Login result: {result}")
+            self._log.info("Login result: %s", result)
 
             if result == EResult.OK:
                 self.logged_in = True
                 if packet.header and isinstance(packet.header, CMsgProtoBufHeader):
                     self.steam_id = packet.header.steamid
-                    self._log.info(f"Logged in with SteamID: {self.steam_id}")
+                    self._log.info("Logged in with SteamID: %s", self.steam_id)
 
                 self._start_heartbeat()
 
@@ -177,7 +187,7 @@ class LogonMixin(_Base):
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                self._log.error(f"Error in heartbeat loop: {e}")
+                self._log.error("Error in heartbeat loop: %s", e)
                 await asyncio.sleep(interval)
 
         return None

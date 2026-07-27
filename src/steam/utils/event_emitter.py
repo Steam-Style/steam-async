@@ -1,8 +1,20 @@
 import asyncio
+import dataclasses
 import inspect
 import logging
 from typing import Callable, Any, Optional, Union
 from collections import defaultdict
+
+
+@dataclasses.dataclass
+class EventStream:
+    queue: "asyncio.Queue[Any]"
+    _client: Any
+    _event: Any
+    _listener: Callable[..., Any]
+
+    def close(self) -> None:
+        self._client.remove_listener(self._event, self._listener)
 
 
 class EventEmitter:
@@ -11,8 +23,7 @@ class EventEmitter:
     """
 
     def __init__(self):
-        self._listeners: dict[Any,
-                              list[Callable[..., Any]]] = defaultdict(list)
+        self._listeners: dict[Any, list[Callable[..., Any]]] = defaultdict(list)
         self._log = logging.getLogger(__name__)
 
     def on(self, event: Any, callback: Callable[..., Any]):
@@ -56,20 +67,22 @@ class EventEmitter:
                     else:
                         callback(*args, **kwargs)
                 except Exception as e:
-                    self._log.error(f"Error in event handler for {event}: {e}")
+                    self._log.error("Error in event handler for %s: %s", event, e)
 
-    async def wait_for(self, event: Any, timeout: Union[float, int, None] = None, check: Optional[Callable[..., bool]] = None) -> Any:
+    def create_listener(
+        self,
+        event: Any,
+        check: Optional[Callable[..., bool]] = None,
+    ) -> asyncio.Future[Any]:
         """
-        Waits for an event to be emitted.
+        Registers a one-time listener for an event that returns a future.
 
         Args:
             event: The event to wait for.
-            timeout: The maximum time to wait in seconds.
-            check: A predicate function that checks the event data. 
-                   Should return True if the event is the one we want.
+            check: A predicate function that checks the event data. Should return True if the event is the one we want.
 
         Returns:
-            The arguments passed to emit() for the event.
+            A future that will be set when the event is emitted and passes the check.
         """
         future: asyncio.Future[Any] = asyncio.Future()
 
@@ -79,22 +92,42 @@ class EventEmitter:
                     if not check(*args, **kwargs):
                         return
                 except Exception as e:
-                    self._log.error(
-                        f"Error in check function for {event}: {e}")
+                    self._log.error("Error in check function for %s: %s", event, e)
                     return
 
             if not future.done():
-                if len(args) == 1:
-                    future.set_result(args[0])
-                else:
-                    future.set_result(args)
-
+                future.set_result(args[0] if len(args) == 1 else args)
                 self.remove_listener(event, listener)
 
         self.on(event, listener)
+        return future
 
-        try:
-            return await asyncio.wait_for(future, timeout=timeout)
-        except asyncio.TimeoutError:
-            self.remove_listener(event, listener)
-            raise
+    def create_stream_listener(
+        self,
+        event: Any,
+        check: Optional[Callable[..., bool]] = None,
+    ) -> EventStream:
+        """
+        Registers a persistent listener that pushes every matching event onto a queue.
+
+        Args:
+            event: The event to listen for.
+            check: A predicate function that checks the event data. Should return True if the event is the one we want.
+
+        Returns:
+            An EventStream object containing the queue and methods to manage the listener.
+        """
+        queue: asyncio.Queue[Any] = asyncio.Queue()
+
+        def listener(*args: Any, **kwargs: Any):
+            if check is not None:
+                try:
+                    if not check(*args, **kwargs):
+                        return
+                except Exception as e:
+                    self._log.error("Error in check function for %s: %s", event, e)
+                    return
+            queue.put_nowait(args[0] if len(args) == 1 else args)
+
+        self.on(event, listener)
+        return EventStream(queue=queue, _client=self, _event=event, _listener=listener)
