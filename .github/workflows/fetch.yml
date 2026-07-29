@@ -27,7 +27,7 @@ jobs:
         run: uv sync
 
       - name: Sync protobufs
-        run: python scripts/sync_protobufs.py
+        run: uv run scripts/sync_protobufs.py
 
       - name: Commit if changed
         run: |
