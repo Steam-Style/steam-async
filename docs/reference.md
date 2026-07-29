@@ -7,4 +7,3 @@
 ::: utils.structs
 ::: utils.crypto
 ::: utils.event_emitter
-::: utils.handshake

@@ -91,7 +91,8 @@ class CMClient(EventEmitter):
             async with self.session.get(STEAM_CM_LIST_URL) as response:
                 response.raise_for_status()
                 json_data = await response.json()
-                raw_server_list = json_data.get("response", {}).get("serverlist", [])
+                raw_server_list = json_data.get(
+                    "response", {}).get("serverlist", [])
                 self.server_list = []
 
                 for server_ip in raw_server_list:
@@ -117,8 +118,6 @@ class CMClient(EventEmitter):
             host: Optional server host to connect to. If None, a server will be selected from the list.
             port: Optional server port to connect to. If None, a server will be selected from the list.
             retry: If True, retries connecting if the initial connection attempt fails.
-            use_fastest: If True, determines and connects to the server with the lowest latency.
-                This adds initial overhead but may improve connection speed.
 
         Returns:
             EResult.OK if connection is successful, EResult.ConnectFailed otherwise.
@@ -138,7 +137,8 @@ class CMClient(EventEmitter):
             try:
                 self.reader, self.writer = await asyncio.open_connection(host, port)
             except (OSError, ValueError, TimeoutError) as e:
-                self._log.error("Failed to connect to server %s:%d: %s", host, port, e)
+                self._log.error(
+                    "Failed to connect to server %s:%d: %s", host, port, e)
 
                 if not retry:
                     return EResult.ConnectFailed
@@ -197,7 +197,8 @@ class CMClient(EventEmitter):
         message = await self.listen()
 
         if message is None:
-            self._log.error("No response received after sending ChannelEncryptResponse")
+            self._log.error(
+                "No response received after sending ChannelEncryptResponse")
             return False
 
         packet = SteamPacket.parse(message)
@@ -336,13 +337,15 @@ class CMClient(EventEmitter):
 
         if self.session_key:
             if self.hmac_secret:
-                data = symmetric_encrypt_HMAC(data, self.session_key, self.hmac_secret)
+                data = symmetric_encrypt_HMAC(
+                    data, self.session_key, self.hmac_secret)
             else:
                 data = symmetric_encrypt(data, self.session_key)
 
         try:
             self.writer.write(
-                len(data).to_bytes(4, byteorder="little") + MAGIC_HEADER.encode() + data
+                len(data).to_bytes(4, byteorder="little") +
+                MAGIC_HEADER.encode() + data
             )
             await self.writer.drain()
             return True
