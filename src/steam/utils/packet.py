@@ -1,15 +1,16 @@
-import struct
-import io
-from typing import Union, Any
 import gzip
+import io
+import struct
 import zipfile
+from typing import Any
+
 from steam.enums.emsg import EMsg
-from steam.utils.structs import MsgHdr
 from steam.utils.protobuf_manager import ProtobufManager
 from steam.utils.protobuf_manager.protobufs.steammessages_base_pb2 import (
-    CMsgProtoBufHeader,
     CMsgMulti,
+    CMsgProtoBufHeader,
 )
+from steam.utils.structs import MsgHdr
 
 
 class SteamPacket:
@@ -17,7 +18,7 @@ class SteamPacket:
     Represents a Steam network packet, either Protobuf or non-Protobuf.
     """
 
-    def __init__(self, emsg: Union[EMsg, int], data: bytes, is_protobuf: bool):
+    def __init__(self, emsg: EMsg | int, data: bytes, is_protobuf: bool):
         """
         Initializes a SteamPacket instance.
 
@@ -26,10 +27,10 @@ class SteamPacket:
             data: The raw packet data.
             is_protobuf: Whether the packet is a Protobuf packet.
         """
-        self.emsg: Union[EMsg, int] = emsg
+        self.emsg: EMsg | int = emsg
         self.is_protobuf: bool = is_protobuf
-        self.header: Union[MsgHdr, CMsgProtoBufHeader, None] = None
-        self.body: Union[bytes, Any, None] = None
+        self.header: MsgHdr | CMsgProtoBufHeader | None = None
+        self.body: bytes | Any | None = None
 
         if self.is_protobuf and isinstance(emsg, EMsg):
             stream = io.BytesIO(data)
@@ -104,7 +105,7 @@ class SteamPacket:
         else:
             data = multi.message_body
 
-        packets: list["SteamPacket"] = []
+        packets: list[SteamPacket] = []
         offset = 0
 
         while offset < len(data):

@@ -1,13 +1,15 @@
-import logging
 import asyncio
-from typing import Optional, Literal, Any, TYPE_CHECKING
+import logging
+from typing import TYPE_CHECKING, Any, Literal
+
 import vdf
-from steam.enums.emsg import EMsg
+
 from steam.client.mixins.protocols import CMClientProtocol
+from steam.enums.emsg import EMsg
 from steam.utils.protobuf_manager.protobufs.steammessages_clientserver_appinfo_pb2 import (
-    CMsgClientPICSProductInfoRequest,
     CMsgClientPICSAccessTokenRequest,
     CMsgClientPICSAccessTokenResponse,
+    CMsgClientPICSProductInfoRequest,
     CMsgClientPICSProductInfoResponse,
 )
 
@@ -26,12 +28,12 @@ class AppsMixin(_Base):
 
     async def get_product_info(
         self,
-        app_ids: Optional[list[int]] = None,
-        package_ids: Optional[list[int]] = None,
-        meta_data_only: Optional[bool] = False,
-        access_tokens: Optional[dict[int, int]] = None,
+        app_ids: list[int] | None = None,
+        package_ids: list[int] | None = None,
+        meta_data_only: bool | None = False,
+        access_tokens: dict[int, int] | None = None,
         timeout: int = 20,
-    ) -> Optional[dict[Literal["apps", "packages"], dict[int, dict[str, Any]]]]:
+    ) -> dict[Literal["apps", "packages"], dict[int, dict[str, Any]]] | None:
         """
         Requests product info for the specified app IDs.
 
@@ -149,6 +151,7 @@ class AppsMixin(_Base):
                 response.ParseFromString(packet.body)
 
             tokens: dict[int, int] = {}
+
             for app_token in response.app_access_tokens:
                 tokens[app_token.appid] = app_token.access_token
 

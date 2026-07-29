@@ -1,9 +1,9 @@
-import importlib
-import pkgutil
 import fnmatch
+import importlib
 import os
+import pkgutil
 import sys
-from typing import Optional, Type
+
 from google.protobuf.message import Message
 
 from steam.enums.emsg import EMsg
@@ -20,7 +20,7 @@ protobuf_overrides = {
     EMsg.ClientChatOfflineMessageNotification: "cmsgclientofflinemessagenotification",
 }
 
-cmsg_lookup: dict[str, Type[Message]] = {}
+cmsg_lookup: dict[str, type[Message]] = {}
 protobufs_path = os.path.join(os.path.dirname(__file__), "protobufs")
 
 if protobufs_path not in sys.path:
@@ -49,7 +49,7 @@ class ProtobufManager:
     """
 
     @staticmethod
-    def get_protobuf(emsg: EMsg) -> Optional[Type[Message]]:
+    def get_protobuf(emsg: EMsg) -> type[Message] | None:
         """
         Returns the protobuf corresponding to the given EMsg.
         """

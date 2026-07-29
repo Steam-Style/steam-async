@@ -2,8 +2,9 @@ import asyncio
 import dataclasses
 import inspect
 import logging
-from typing import Callable, Any, Optional, Union
 from collections import defaultdict
+from collections.abc import Callable
+from typing import Any
 
 
 @dataclasses.dataclass
@@ -72,7 +73,7 @@ class EventEmitter:
     def create_listener(
         self,
         event: Any,
-        check: Optional[Callable[..., bool]] = None,
+        check: Callable[..., bool] | None = None,
     ) -> asyncio.Future[Any]:
         """
         Registers a one-time listener for an event that returns a future.
@@ -105,7 +106,7 @@ class EventEmitter:
     def create_stream_listener(
         self,
         event: Any,
-        check: Optional[Callable[..., bool]] = None,
+        check: Callable[..., bool] | None = None,
     ) -> EventStream:
         """
         Registers a persistent listener that pushes every matching event onto a queue.

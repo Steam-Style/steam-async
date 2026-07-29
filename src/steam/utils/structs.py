@@ -1,5 +1,4 @@
 import struct
-from typing import Optional
 
 
 class StructBase:
@@ -21,7 +20,7 @@ class MsgHdr(StructBase):
     FMT = "<IQQ"
     SIZE = struct.calcsize(FMT)
 
-    def __init__(self, data: Optional[bytes] = None):
+    def __init__(self, data: bytes | None = None):
         """
         Initializes the MsgHdr.
 

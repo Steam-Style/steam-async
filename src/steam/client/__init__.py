@@ -1,7 +1,8 @@
 import logging
 import os
+
+from steam.client.mixins import AppsMixin, LogonMixin
 from steam.utils.cm_client import CMClient
-from steam.client.mixins import LogonMixin, AppsMixin
 
 
 class SteamClient(CMClient, LogonMixin, AppsMixin):

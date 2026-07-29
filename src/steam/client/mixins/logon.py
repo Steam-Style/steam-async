@@ -1,11 +1,12 @@
-import logging
 import asyncio
-from typing import Optional, Any, TYPE_CHECKING
-from steam.enums.emsg import EMsg
-from steam.enums.common import EResult
+import logging
+from typing import TYPE_CHECKING, Any
+
 from steam.client.mixins.protocols import CMClientProtocol
-from steam.utils.protobuf_manager import ProtobufManager
+from steam.enums.common import EResult
+from steam.enums.emsg import EMsg
 from steam.utils.packet import SteamPacket
+from steam.utils.protobuf_manager import ProtobufManager
 from steam.utils.protobuf_manager.protobufs.steammessages_base_pb2 import (
     CMsgProtoBufHeader,
 )
@@ -25,7 +26,7 @@ class LogonMixin(_Base):
     """
 
     _log: logging.Logger = logging.getLogger(__name__)
-    _heartbeat_task: Optional[asyncio.Task[None]] = None
+    _heartbeat_task: asyncio.Task[None] | None = None
 
     connected: bool
     machine_id: bytes
@@ -34,10 +35,10 @@ class LogonMixin(_Base):
 
     async def login(
         self,
-        username: Optional[str] = None,
-        password: Optional[str] = None,
-        auth_code: Optional[str] = None,
-        two_factor_code: Optional[str] = None,
+        username: str | None = None,
+        password: str | None = None,
+        auth_code: str | None = None,
+        two_factor_code: str | None = None,
     ) -> EResult:
         """
         Logs in the client with the provided credentials or anonymously if none are
@@ -189,5 +190,3 @@ class LogonMixin(_Base):
             except Exception as e:
                 self._log.error("Error in heartbeat loop: %s", e)
                 await asyncio.sleep(interval)
-
-        return None

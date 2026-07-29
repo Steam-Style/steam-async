@@ -2,10 +2,10 @@
 Mixins for Steam client functionality.
 """
 
-from .logon import LogonMixin
 from .apps import AppsMixin
+from .logon import LogonMixin
 
 __all__ = [
-    "LogonMixin",
     "AppsMixin",
+    "LogonMixin",
 ]
