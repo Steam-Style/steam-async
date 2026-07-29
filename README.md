@@ -19,7 +19,7 @@ pip install git+https://github.com/Steam-Style/steam-python
 
 ## Usage
 
-To interact with Steam you must first connect to a Connection Manager Server and then log in.
+To interact with Steam you must first connect to a connection manager server and then log in.
 
 ```python
 import asyncio
@@ -54,7 +54,7 @@ This project uses uv for Python dependency management.
    Install `uv` if you haven't already.
 
    ```bash
-   # macOS/Linux
+   # Linux/macOS
    curl -LsSf https://astral.sh/uv/install.sh | sh
 
    # Windows
