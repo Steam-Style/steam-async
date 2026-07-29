@@ -1,26 +1,34 @@
-from typing import Optional, Any
 import asyncio
-import time
-import logging
-import struct
-import random
-import aiohttp
+import binascii
 import itertools
+import logging
+import random
+import struct
+import time
+from typing import Any
+
+import aiohttp
 from google.protobuf.message import Message
-from steam.enums.emsg import EMsg
+
 from steam.enums.common import EResult
-from steam.utils.handshake import perform_handshake
-from steam.utils.event_emitter import EventEmitter
-from steam.utils.packet import SteamPacket
+from steam.enums.emsg import EMsg
 from steam.utils.crypto import (
-    symmetric_encrypt,
-    symmetric_encrypt_HMAC,
+    generate_session_key,
     symmetric_decrypt,
     symmetric_decrypt_HMAC,
+    symmetric_encrypt,
+    symmetric_encrypt_HMAC,
 )
+from steam.utils.event_emitter import EventEmitter
+from steam.utils.packet import SteamPacket
 from steam.utils.protobuf_manager import ProtobufManager
 from steam.utils.protobuf_manager.protobufs.steammessages_base_pb2 import (
     CMsgProtoBufHeader,
+)
+from steam.utils.structs import (
+    MsgChannelEncryptRequest,
+    MsgChannelEncryptResponse,
+    MsgHdr,
 )
 
 STEAM_CM_LIST_URL = (
@@ -42,19 +50,19 @@ class CMClient(EventEmitter):
         Initializes the CMClient.
         """
         super().__init__()
-        self.session: Optional[aiohttp.ClientSession] = None
+        self.session: aiohttp.ClientSession | None = None
         self.server_list: list[tuple[str, int]] = []
-        self.reader: Optional[asyncio.StreamReader] = None
-        self.writer: Optional[asyncio.StreamWriter] = None
+        self.reader: asyncio.StreamReader | None = None
+        self.writer: asyncio.StreamWriter | None = None
         self.connected: bool = False
-        self.session_key: Optional[bytes] = None
-        self.hmac_secret: Optional[bytes] = None
+        self.session_key: bytes | None = None
+        self.hmac_secret: bytes | None = None
         self.steam_id: int = 0
         self._global_job_id: itertools.count = itertools.count(1)
         self._session_id: int = random.randint(1, 2**31 - 1)
-        self._loop_task: Optional[asyncio.Task[Any]] = None
+        self._loop_task: asyncio.Task[Any] | None = None
 
-    async def _test_server_latency(self, host: str, port: int) -> Optional[float]:
+    async def _test_server_latency(self, host: str, port: int) -> float | None:
         try:
             start_time = time.time()
             future = asyncio.open_connection(host, port)
@@ -98,8 +106,8 @@ class CMClient(EventEmitter):
 
     async def connect(
         self,
-        host: Optional[str] = None,
-        port: Optional[int] = None,
+        host: str | None = None,
+        port: int | None = None,
         retry: bool = False,
     ) -> EResult:
         """
@@ -137,7 +145,7 @@ class CMClient(EventEmitter):
 
                 continue
 
-            if await self._handshake():
+            if await self.perform_handshake():
                 self.connected = True
                 self._loop_task = asyncio.create_task(self._read_loop())
                 return EResult.OK
@@ -148,6 +156,61 @@ class CMClient(EventEmitter):
                 return EResult.ConnectFailed
 
             self._log.info("Retrying connection...")
+
+    async def perform_handshake(self) -> bool:
+        """
+        Performs the handshake with the server.
+
+        Returns:
+            True if the handshake was successful, False otherwise.
+        """
+        if self.writer is None:
+            return False
+
+        message = await self.listen()
+
+        if message is None:
+            self._log.error("No response received after connecting")
+            return False
+
+        packet = SteamPacket.parse(message)
+        self._log.info("Received: %s", packet.emsg)
+
+        if packet.emsg != EMsg.ChannelEncryptRequest or packet.body is None:
+            self._log.error("Did not receive ChannelEncryptRequest")
+            return False
+
+        request = MsgChannelEncryptRequest(packet.body)
+        session_key, encrypted_key = generate_session_key(request.challenge)
+        crc = binascii.crc32(encrypted_key) & 0xFFFFFFFF
+
+        response = MsgChannelEncryptResponse()
+        response.key_size = len(encrypted_key)
+        response.key = encrypted_key
+        response.crc = crc
+
+        header = MsgHdr()
+        header.emsg = EMsg.ChannelEncryptResponse
+        payload = header.pack() + response.pack()
+
+        await self.send(payload)
+        message = await self.listen()
+
+        if message is None:
+            self._log.error("No response received after sending ChannelEncryptResponse")
+            return False
+
+        packet = SteamPacket.parse(message)
+
+        if packet.emsg != EMsg.ChannelEncryptResult:
+            self._log.error(
+                "Did not receive ChannelEncryptResult after sending response"
+            )
+            return False
+
+        self.session_key = session_key
+        self.hmac_secret = session_key[:16]
+        return True
 
     async def _read_loop(self):
         while self.connected:
@@ -170,7 +233,7 @@ class CMClient(EventEmitter):
 
                 break
 
-    async def _select_server(self) -> Optional[tuple[str, int]]:
+    async def _select_server(self) -> tuple[str, int] | None:
         if not self.server_list:
             await self.get_server_list()
 
@@ -180,9 +243,6 @@ class CMClient(EventEmitter):
                 return (host, port)
 
         return None
-
-    async def _handshake(self) -> bool:
-        return await perform_handshake(self)
 
     async def disconnect(self):
         """
@@ -227,9 +287,9 @@ class CMClient(EventEmitter):
         self,
         emsg: EMsg,
         message: Message,
-        steam_id: Optional[int] = None,
-        job_id: Optional[int] = None,
-    ):
+        steam_id: int | None = None,
+        job_id: int | None = None,
+    ) -> int | None:
         """
         Sends a protobuf message to the server.
 
@@ -240,7 +300,7 @@ class CMClient(EventEmitter):
         """
         if not self.connected:
             self._log.error("The client is not connected")
-            return
+            return None
 
         job_id = job_id or self.next_job_id()
         header = CMsgProtoBufHeader()
@@ -291,7 +351,7 @@ class CMClient(EventEmitter):
             self._log.error("Error sending data: %s", e)
             return False
 
-    async def listen(self) -> Optional[bytes]:
+    async def listen(self) -> bytes | None:
         """
         Listens for incoming messages from the server.
 
