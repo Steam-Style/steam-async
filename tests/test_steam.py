@@ -1,4 +1,5 @@
 import pytest
+
 from steam.client import SteamClient
 
 
