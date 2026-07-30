@@ -80,7 +80,7 @@ class AppsMixin(_Base):
         job_id = self.next_job_id()
         stream = self.create_stream_listener(
             EMsg.ClientPICSProductInfoResponse,
-            check=lambda pkt: pkt.header.jobid_target == job_id,
+            check=lambda packet: packet.header.jobid_target == job_id,
         )
         await self.send_protobuf_message(
             EMsg.ClientPICSProductInfoRequest, request, job_id=job_id
@@ -121,41 +121,60 @@ class AppsMixin(_Base):
         return parsed_response
 
     async def get_access_tokens(
-        self, app_ids: list[int], timeout: int = 20
-    ) -> dict[int, int]:
+        self, app_ids: list[int] | None = None, package_ids: list[int] | None = None, timeout: int = 20
+    ) -> dict[Literal["apps", "packages"], dict[int, int]] | None:
         """
         Requests access tokens for the specified app IDs.
 
         Args:
             app_ids: List of application IDs to request access tokens for.
+            package_ids: List of package IDs to request access tokens for.
             timeout: Timeout in seconds for the request.
 
         Returns:
-            A dictionary mapping app IDs to their access tokens.
+            A dictionary mapping app IDs and package IDs to their access tokens, or None if the request times out.
         """
-        request = CMsgClientPICSAccessTokenRequest()
-        request.appids.extend(app_ids)
+        if app_ids is None and package_ids is None:
+            return None
 
-        response_future = self.create_stream_listener(
+        request = CMsgClientPICSAccessTokenRequest()
+
+        if app_ids:
+            request.appids.extend(app_ids)
+
+        if package_ids:
+            request.packageids.extend(package_ids)
+
+        parsed_response: dict[
+            Literal["apps", "packages"], dict[int, int]
+        ] = {
+            "apps": {},
+            "packages": {},
+        }
+        job_id = self.next_job_id()
+        response_future = self.create_listener(
             EMsg.ClientPICSAccessTokenResponse,
-            check=lambda packet: packet.header.jobid_target == self.next_job_id(),
+            check=lambda packet: packet.header.jobid_target == job_id,
         )
-        await self.send_protobuf_message(EMsg.ClientPICSAccessTokenRequest, request)
+        await self.send_protobuf_message(EMsg.ClientPICSAccessTokenRequest, request, job_id=job_id)
 
         try:
-            packet = await response_future
-            response: Any = packet.body
+            packet = await asyncio.wait_for(response_future, timeout=timeout)
+            response = packet.body
 
             if isinstance(response, bytes):
                 response = CMsgClientPICSAccessTokenResponse()
                 response.ParseFromString(packet.body)
-
-            tokens: dict[int, int] = {}
+            else:
+                response = packet.body
 
             for app_token in response.app_access_tokens:
-                tokens[app_token.appid] = app_token.access_token
+                parsed_response["apps"][app_token.appid] = app_token.access_token
 
-            return tokens
+            for package_token in response.package_access_tokens:
+                parsed_response["packages"][package_token.packageid] = package_token.access_token
+
+            return parsed_response
 
         except asyncio.TimeoutError:
-            return {}
+            return None
