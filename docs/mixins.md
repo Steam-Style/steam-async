@@ -1,6 +1,10 @@
 # Mixins
 
-Mixins are built into [`SteamClient`](reference.md#client.SteamClient) and can be accessed directly through the client.
+Mixins are submodules built into the [`SteamClient`](reference.md#client.SteamClient), providing functionality for interacting with the Steam network.
 
 ::: client.mixins.logon
+    options:
+        show_bases: false
 ::: client.mixins.apps
+    options:
+        show_bases: false

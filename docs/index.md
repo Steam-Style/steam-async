@@ -1,10 +1,10 @@
 # Steam Python Documentation
 
-Welcome to the documentation for the Steam Python project. This library provides a fast and lightweight Python interface for interacting with Steam.
+Welcome to the documentation for the `steam-async` Python project. This library provides a fast and lightweight Python interface for interacting with Steam asynchronously using [asyncio](https://docs.python.org/3/library/asyncio.html).
 
 !!! warning
 
-    `steam-python` is currently under heavy development and is not yet ready for public use.
+    `steam-async` is currently under heavy development and is not yet ready for public use.
 
 ## Getting Started
 
@@ -15,7 +15,7 @@ To get started, check out the [API Reference](reference.md) to see the available
 You can install the library through our official GitHub repository.
 
 ```
-pip install git+https://github.com/Steam-Style/steam-python
+pip install git+https://github.com/Steam-Style/steam-async
 ```
 
 ## Usage Example
