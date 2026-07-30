@@ -1,23 +1,24 @@
 from base64 import b64decode
 from os import urandom
 
-from Crypto.Cipher import AES, PKCS1_OAEP
-from Crypto.Hash import HMAC, SHA1
-from Crypto.PublicKey.RSA import import_key
-from Crypto.Util.Padding import pad, unpad
+from cryptography.hazmat.primitives import hashes, hmac
+from cryptography.hazmat.primitives import padding as sym_padding
+from cryptography.hazmat.primitives.asymmetric import padding as asym_padding
+from cryptography.hazmat.primitives.asymmetric.rsa import RSAPublicKey
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.primitives.serialization import load_der_public_key
 
 
-class UniverseKey:
-    """
-    Public keys for Universes.
-    """
-
-    Public = import_key(b64decode("""
+def load_universe_public_key() -> RSAPublicKey:
+    key = load_der_public_key(b64decode("""
 MIGdMA0GCSqGSIb3DQEBAQUAA4GLADCBhwKBgQDf7BrWLBBmLBc1OhSwfFkRf53T
 2Ct64+AVzRkeRuh7h3SiGEYxqQMUeYKO6UWiSRKpI2hzic9pobFhRr3Bvr/WARvY
 gdTckPv+T1JzZsuVcNfFjrocejN1oWI0Rrtgt4Bo+hOneoo3S57G9F1fOpn5nsQ6
 6WOiu4gZKODnFMBCiQIBEQ==
 """))
+    if not isinstance(key, RSAPublicKey):
+        raise TypeError("Expected the Universe key to be an RSA public key")
+    return key
 
 
 def generate_session_key(hmac_secret: bytes = b"") -> tuple[bytes, bytes]:
@@ -31,8 +32,13 @@ def generate_session_key(hmac_secret: bytes = b"") -> tuple[bytes, bytes]:
         A tuple containing the session key and its encrypted form.
     """
     session_key = urandom(32)
-    encrypted_session_key = PKCS1_OAEP.new(UniverseKey.Public, SHA1).encrypt(
-        session_key + hmac_secret
+    encrypted_session_key = load_universe_public_key().encrypt(
+        session_key + hmac_secret,
+        asym_padding.OAEP(
+            mgf=asym_padding.MGF1(algorithm=hashes.SHA1()),
+            algorithm=hashes.SHA1(),
+            label=None,
+        ),
     )
 
     return (session_key, encrypted_session_key)
@@ -66,8 +72,8 @@ def symmetric_encrypt_HMAC(message: bytes, key: bytes, hmac_secret: bytes) -> by
         The encrypted message as bytes.
     """
     prefix = urandom(3)
-    hmac = hmac_sha1(hmac_secret, prefix + message)
-    iv = hmac[:13] + prefix
+    tag = hmac_sha1(hmac_secret, prefix + message)
+    iv = tag[:13] + prefix
     return symmetric_encrypt_with_iv(message, key, iv)
 
 
@@ -83,9 +89,17 @@ def symmetric_encrypt_with_iv(message: bytes, key: bytes, iv: bytes) -> bytes:
     Returns:
         The encrypted message as bytes.
     """
-    encrypted_iv = AES.new(key, AES.MODE_ECB).encrypt(iv)
-    cipher = AES.new(key, AES.MODE_CBC, iv)
-    return encrypted_iv + cipher.encrypt(pad(message, 16))
+    ecb_encryptor = Cipher(algorithms.AES(key), modes.ECB()).encryptor()
+    encrypted_iv = ecb_encryptor.update(iv) + ecb_encryptor.finalize()
+
+    padder = sym_padding.PKCS7(128).padder()
+    padded_message = padder.update(message) + padder.finalize()
+
+    cbc_encryptor = Cipher(algorithms.AES(key), modes.CBC(iv)).encryptor()
+    ciphertext = cbc_encryptor.update(
+        padded_message) + cbc_encryptor.finalize()
+
+    return encrypted_iv + ciphertext
 
 
 def symmetric_decrypt(message: bytes, key: bytes) -> bytes:
@@ -118,9 +132,9 @@ def symmetric_decrypt_HMAC(message: bytes, key: bytes, hmac_secret: bytes) -> by
     iv = symmetric_decrypt_iv(message, key)
     decrypted_message = symmetric_decrypt_with_iv(message, key, iv)
 
-    hmac = hmac_sha1(hmac_secret, iv[-3:] + decrypted_message)
+    tag = hmac_sha1(hmac_secret, iv[-3:] + decrypted_message)
 
-    if iv[:13] != hmac[:13]:
+    if iv[:13] != tag[:13]:
         raise RuntimeError("Unable to decrypt message. HMAC does not match.")
 
     return decrypted_message
@@ -135,8 +149,10 @@ def symmetric_decrypt_iv(message: bytes, key: bytes) -> bytes:
         key: The AES key.
 
     Returns:
-        The decrypted IV as bytes."""
-    return AES.new(key, AES.MODE_ECB).decrypt(message[:16])
+        The decrypted IV as bytes.
+    """
+    ecb_decryptor = Cipher(algorithms.AES(key), modes.ECB()).decryptor()
+    return ecb_decryptor.update(message[:16]) + ecb_decryptor.finalize()
 
 
 def symmetric_decrypt_with_iv(message: bytes, key: bytes, iv: bytes) -> bytes:
@@ -151,8 +167,12 @@ def symmetric_decrypt_with_iv(message: bytes, key: bytes, iv: bytes) -> bytes:
     Returns:
         The decrypted message as bytes.
     """
-    cipher = AES.new(key, AES.MODE_CBC, iv)
-    return unpad(cipher.decrypt(message[16:]), 16)
+    cbc_decryptor = Cipher(algorithms.AES(key), modes.CBC(iv)).decryptor()
+    padded_message = cbc_decryptor.update(
+        message[16:]) + cbc_decryptor.finalize()
+
+    unpadder = sym_padding.PKCS7(128).unpadder()
+    return unpadder.update(padded_message) + unpadder.finalize()
 
 
 def hmac_sha1(secret: bytes, data: bytes) -> bytes:
@@ -166,4 +186,6 @@ def hmac_sha1(secret: bytes, data: bytes) -> bytes:
     Returns:
         The HMAC-SHA1 digest as bytes.
     """
-    return HMAC.new(secret, data, SHA1).digest()
+    h = hmac.HMAC(secret, hashes.SHA1())
+    h.update(data)
+    return h.finalize()
