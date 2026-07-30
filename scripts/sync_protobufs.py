@@ -2,7 +2,8 @@ import os
 import shutil
 import stat
 import subprocess
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 
 def remove_readonly(function: Callable[[str], None], path: str, _: Any):

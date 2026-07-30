@@ -1,10 +1,11 @@
-from hatchling.builders.hooks.plugin.interface import BuildHookInterface
+import logging
 import os
 import re
 import shutil
-import sys
-import logging
 import subprocess
+import sys
+
+from hatchling.builders.hooks.plugin.interface import BuildHookInterface
 
 
 def compile_protobufs():
