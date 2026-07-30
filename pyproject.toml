@@ -1,5 +1,5 @@
 [project]
-name = "steam-python"
+name = "steam-async"
 version = "0.0.1"
 description = "A fast and lightweight Python interface for interacting with Steam asynchronously."
 license = "MIT"
@@ -39,6 +39,7 @@ dev = [
     "pytest (>=9.0.2,<10.0.0)",
     "pytest-asyncio (>=1.3.0,<2.0.0)",
     "ruff>=0.16.0",
+    "ty>=0.0.65",
 ]
 docs = [
     "mkdocs (>=1.6.1,<2.0.0)",
