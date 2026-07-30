@@ -58,7 +58,7 @@ class CMClient(EventEmitter):
         self.session_key: bytes | None = None
         self.hmac_secret: bytes | None = None
         self.steam_id: int = 0
-        self._global_job_id: itertools.count = itertools.count(1)
+        self._global_job_id: itertools.count[int] = itertools.count(1)
         self._session_id: int = random.randint(1, 2**31 - 1)
         self._loop_task: asyncio.Task[Any] | None = None
 
